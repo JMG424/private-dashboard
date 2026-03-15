@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operations Dashboard — Jason M.G.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0e1a;
+      --bg2:       #0d1220;
+      --cyan:      #00d4ff;
+      --purple:    #7b61ff;
+      --green:     #00e676;
+      --amber:     #ffb300;
+      --coral:     #ff6b6b;
+      --glass-bg:  rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.09);
+      --text:      #e8eaf0;
+      --muted:     #7a849a;
+      --radius:    14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Starfield ─────────────────────────────────────────────────── */
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    /* ─── Layout ────────────────────────────────────────────────────── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    section {
+      margin-bottom: 72px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+
+    /* ─── Glass Card ────────────────────────────────────────────────── */
+    .glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .glass:hover {
+      border-color: rgba(0,212,255,0.22);
+      box-shadow: 0 0 24px rgba(0,212,255,0.06);
+    }
+
+    /* ─── Header ────────────────────────────────────────────────────── */
+    header {
+      padding: 52px 0 40px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      border-bottom: 1px solid var(--glass-border);
+      margin-bottom: 64px;
+    }
+
+    .header-left {}
+
+    .header-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .header-title {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .header-sub {
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-weight: 400;
+    }
+
+    .header-meta {
+      margin-top: 14px;
+      font-size: 12px;
+      color: rgba(122,132,154,0.7);
+      letter-spacing: 0.04em;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0,230,118,0.09);
+      border: 1px solid rgba(0,230,118,0.25);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 0.08em;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(0,230,118,0.5); }
+      50%       { opacity: 0.8; transform: scale(1.2); box-shadow: 0 0 0 5px rgba(0,230,118,0); }
+    }
+
+    /* ─── Org Chart ─────────────────────────────────────────────────── */
+    .org-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+    }
+
+    .org-top {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0;
+    }
+
+    .org-svg-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+
+    .org-bottom {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 0;
+    }
+
+    .org-node {
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      text-align: center;
+      position: relative;
+      cursor: default;
+    }
+
+    .org-node.chief {
+      width: 200px;
+      border-color: rgba(0,212,255,0.35);
+      box-shadow: 0 0 30px rgba(0,212,255,0.08);
+    }
+    .org-node.chief:hover {
+      border-color: rgba(0,212,255,0.55);
+      box-shadow: 0 0 40px rgba(0,212,255,0.14);
+    }
+
+    .org-node.specialist {
+      width: 155px;
+      flex-shrink: 0;
+    }
+
+    .org-emoji {
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .org-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .org-title {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      font-weight: 400;
+    }
+
+    .org-domain {
+      font-size: 11px;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .active-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      margin-top: 10px;
+    }
+
+    .active-dot::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* specialist accent borders */
+    .node-cyan   { border-color: rgba(0,212,255,0.3); }
+    .node-green  { border-color: rgba(0,230,118,0.3); }
+    .node-amber  { border-color: rgba(255,179,0,0.3); }
+    .node-coral  { border-color: rgba(255,107,107,0.3); }
+    .node-purple { border-color: rgba(123,97,255,0.3); }
+
+    .node-cyan:hover   { border-color: rgba(0,212,255,0.5);   box-shadow: 0 0 24px rgba(0,212,255,0.1); }
+    .node-green:hover  { border-color: rgba(0,230,118,0.5);   box-shadow: 0 0 24px rgba(0,230,118,0.1); }
+    .node-amber:hover  { border-color: rgba(255,179,0,0.5);   box-shadow: 0 0 24px rgba(255,179,0,0.1); }
+    .node-coral:hover  { border-color: rgba(255,107,107,0.5); box-shadow: 0 0 24px rgba(255,107,107,0.1); }
+    .node-purple:hover { border-color: rgba(123,97,255,0.5);  box-shadow: 0 0 24px rgba(123,97,255,0.1); }
+
+    .color-cyan   { color: var(--cyan); }
+    .color-green  { color: var(--green); }
+    .color-amber  { color: var(--amber); }
+    .color-coral  { color: var(--coral); }
+    .color-purple { color: var(--purple); }
+
+    /* ─── Workflow Diagram ──────────────────────────────────────────── */
+    .workflow-container {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .workflow-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 700px;
+      padding: 16px 0;
+    }
+
+    .wf-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .wf-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      border: 2px solid;
+      backdrop-filter: blur(10px);
+    }
+
+    .wf-circle.jmg {
+      background: rgba(123,97,255,0.12);
+      border-color: rgba(123,97,255,0.5);
+      color: var(--purple);
+      font-size: 14px;
+    }
+
+    .wf-circle.clawd {
+      background: rgba(0,212,255,0.1);
+      border-color: rgba(0,212,255,0.5);
+      color: var(--cyan);
+      font-size: 18px;
+    }
+
+    .wf-circle.team {
+      background: rgba(0,230,118,0.08);
+      border-color: rgba(0,230,118,0.4);
+      color: var(--green);
+      font-size: 18px;
+    }
+
+    .wf-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      text-align: center;
+      max-width: 80px;
+    }
+
+    .wf-sublabel {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+      max-width: 80px;
+      line-height: 1.4;
+    }
+
+    .wf-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 50px;
+    }
+
+    .wf-arrow-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,212,255,0.3), rgba(0,212,255,0.6), rgba(0,212,255,0.3));
+      position: relative;
+    }
+    .wf-arrow-line::after {
+      content: '▶';
+      position: absolute;
+      right: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(0,212,255,0.7);
+      font-size: 9px;
+    }
+
+    .wf-arrow-text {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* ─── Operations Cards ──────────────────────────────────────────── */
+    .ops-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .op-card {
+      padding: 24px;
+    }
+
+    .op-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .op-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .op-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+
+    .status-running {
+      background: rgba(0,230,118,0.1);
+      border: 1px solid rgba(0,230,118,0.25);
+      color: var(--green);
+    }
+    .status-progress {
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.25);
+      color: var(--cyan);
+    }
+    .status-monitoring {
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.25);
+      color: var(--coral);
+    }
+    .status-active {
+      background: rgba(123,97,255,0.1);
+      border: 1px solid rgba(123,97,255,0.25);
+      color: var(--purple);
+    }
+
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .op-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .op-agent {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .op-agent span {
+      color: var(--cyan);
+    }
+
+    .op-desc {
+      font-size: 13px;
+      color: rgba(232,234,240,0.65);
+      line-height: 1.55;
+    }
+
+    /* ─── Agent Profiles ────────────────────────────────────────────── */
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .profile-card {
+      padding: 28px 24px;
+    }
+
+    .profile-icon-wrap {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 18px;
+      border: 1px solid;
+    }
+
+    .icon-cyan   { background: rgba(0,212,255,0.08);   border-color: rgba(0,212,255,0.25);   box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+    .icon-green  { background: rgba(0,230,118,0.08);   border-color: rgba(0,230,118,0.25);   box-shadow: 0 0 20px rgba(0,230,118,0.1); }
+    .icon-amber  { background: rgba(255,179,0,0.08);   border-color: rgba(255,179,0,0.25);   box-shadow: 0 0 20px rgba(255,179,0,0.1); }
+    .icon-coral  { background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.25); box-shadow: 0 0 20px rgba(255,107,107,0.1); }
+    .icon-purple { background: rgba(123,97,255,0.08);  border-color: rgba(123,97,255,0.25);  box-shadow: 0 0 20px rgba(123,97,255,0.1); }
+
+    .profile-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+
+    .profile-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      margin-bottom: 18px;
+      font-weight: 400;
+    }
+
+    .profile-row {
+      margin-bottom: 14px;
+    }
+
+    .profile-row-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .profile-row-value {
+      font-size: 13px;
+      color: rgba(232,234,240,0.75);
+      line-height: 1.5;
+    }
+
+    .profile-row-value ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .profile-row-value ul li {
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 3px;
+      color: rgba(232,234,240,0.65);
+    }
+
+    .profile-row-value ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+      font-size: 10px;
+      top: 2px;
+    }
+
+    .always-on {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .always-on::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 32px 0;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .footer-brand {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-meta {
+      font-size: 12px;
+      color: rgba(122,132,154,0.5);
+      margin-top: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── Divider ───────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--glass-border);
+      margin: 0 0 64px;
+    }
+
+    /* ─── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      header { flex-direction: column; }
+      .header-right { align-items: flex-start; }
+      .org-bottom { gap: 12px; }
+      .org-node.specialist { width: 140px; }
+      .profiles-grid { grid-template-columns: 1fr 1fr; }
+      .ops-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 420px) {
+      .profiles-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Starfield -->
+<canvas id="stars-canvas"></canvas>
+
+<div class="page-wrap">
+
+  <!-- ── HEADER ─────────────────────────────────────────────────────── -->
+  <header>
+    <div class="header-left">
+      <div class="header-eyebrow">Operations Dashboard</div>
+      <h1 class="header-title">Jason M.G.</h1>
+      <div class="header-sub">AI-Powered Business Operations</div>
+      <div class="header-meta">Powered by StaffOS &nbsp;·&nbsp; Built on OpenClaw</div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge">
+        <span class="pulse-dot"></span>
+        LIVE
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ORG CHART ──────────────────────────────────────────────────── -->
+  <section>
+    <div class="section-label">Team Structure</div>
+    <div class="section-title">The Team</div>
+
+    <div class="org-wrapper">
+
+      <!-- Chief node -->
+      <div class="org-top">
+        <div class="glass org-node chief node-cyan" id="org-chief">
+          <div class="org-emoji">☠️</div>
+          <div class="org-name">Clawd13</div>
+          <div class="org-title">Chief of Staff</div>
+          <div class="org-domain color-cyan">Strategy &amp; Coordination</div>
+          <div class="active-dot">Active</div>
+        </div>
+      </div>
+
+      <!-- SVG connector lines -->
+      <svg id="org-svg" class="org-svg-container" height="60" style="display:block; overflow:visible;" aria-hidden="true">
+        <!-- lines drawn by JS -->
+      </svg>
+
+      <!-- Specialist nodes -->
+      <div class="org-bottom" id="org-bottom">
+
+        <div class="glass org-node specialist node-green" id="sn-zach">
+          <div class="org-emoji">📊</div>
+          <div class="org-name">ZachClaw</div>
+          <div class="org-title">Marketing Lead</div>
+          <div class="org-domain color-green">Growth &amp; Ads</div>
+          <div class="active-dot">Active</div>
+        </div>
+
+        <div class="glass org-node specialist node-amber" id="sn-ledger">
+          <div class="org-emoji">💰</div>
+          <div class="org-name">Ledger</div>
+          <div class="org-title">Finance Analyst</div>
+          <div class="org-domain color-amber">Finance &amp; Reporting</div>
+          <div class="active-dot">Active</div>
+        </div>
+
+        <div class="glass org-node specialist node-coral" id="sn-sentinel">
+          <div class="org-emoji">🛡️</div>
+          <div class="org-name">Sentinel</div>
+          <div class="org-title">Security Ops</div>
+          <div class="org-domain color-coral">Security &amp; Privacy</div>
+          <div class="active-dot">Active</div>
+        </div>
+
+        <div class="glass org-node specialist node-purple" id="sn-atlas">
+          <div class="org-emoji">🗺️</div>
+          <div class="org-name">Atlas</div>
+          <div class="org-title">Strategy &amp; Systems</div>
+          <div class="org-domain color-purple">Intel &amp; Architecture</div>
+          <div class="active-dot">Active</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WORKFLOW DIAGRAM ───────────────────────────────────────────── -->
+  <section>
+    <div class="section-label">Operations Model</div>
+    <div class="section-title">How We Work</div>
+
+    <div class="workflow-container">
+      <div class="workflow-flow">
+
+        <!-- JMG -->
+        <div class="wf-node">
+          <div class="wf-circle jmg">JMG</div>
+          <div class="wf-label">Jason</div>
+          <div class="wf-sublabel">Sets direction</div>
+        </div>
+
+        <div class="wf-arrow">
+          <div class="wf-arrow-line"></div>
+          <div class="wf-arrow-text">direction</div>
+        </div>
+
+        <!-- Clawd13 -->
+        <div class="wf-node">
+          <div class="wf-circle clawd">☠️</div>
+          <div class="wf-label">Clawd13</div>
+          <div class="wf-sublabel">Breaks into priorities</div>
+        </div>
+
+        <div class="wf-arrow">
+          <div class="wf-arrow-line"></div>
+          <div class="wf-arrow-text">delegates</div>
+        </div>
+
+        <!-- Team -->
+        <div class="wf-node">
+          <div class="wf-circle team">👥</div>
+          <div class="wf-label">Specialists</div>
+          <div class="wf-sublabel">Zach · Ledger · Sentinel · Atlas</div>
+        </div>
+
+        <div class="wf-arrow">
+          <div class="wf-arrow-line"></div>
+          <div class="wf-arrow-text">execute</div>
+        </div>
+
+        <!-- Domains -->
+        <div class="wf-node">
+          <div class="wf-circle" style="background:rgba(0,212,255,0.06);border-color:rgba(0,212,255,0.3);color:var(--cyan);font-size:18px;">⚡</div>
+          <div class="wf-label">Work Product</div>
+          <div class="wf-sublabel">Domain outputs</div>
+        </div>
+
+        <div class="wf-arrow" style="transform: scaleX(-1);">
+          <div class="wf-arrow-line"></div>
+          <div class="wf-arrow-text" style="transform:scaleX(-1);">surfaces back</div>
+        </div>
+
+        <!-- JMG again (results) -->
+        <div class="wf-node">
+          <div class="wf-circle jmg">JMG</div>
+          <div class="wf-label">Jason</div>
+          <div class="wf-sublabel">Reviews results</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ACTIVE OPERATIONS ──────────────────────────────────────────── -->
+  <section>
+    <div class="section-label">Current Work</div>
+    <div class="section-title">In Motion</div>
+
+    <div class="ops-grid">
+
+      <div class="glass op-card">
+        <div class="op-card-top">
+          <div class="op-icon">📣</div>
+          <div class="op-status status-running"><span class="status-dot"></span>Running</div>
+        </div>
+        <div class="op-name">Lead Generation Campaign</div>
+        <div class="op-agent">Agent: <span>ZachClaw</span></div>
+        <div class="op-desc">Facebook ads → Lead magnet → Free group reading. Testing creative, optimizing cost per lead.</div>
+      </div>
+
+      <div class="glass op-card">
+        <div class="op-card-top">
+          <div class="op-icon">📧</div>
+          <div class="op-status status-progress"><span class="status-dot"></span>In Progress</div>
+        </div>
+        <div class="op-name">Welcome Email Sequence</div>
+        <div class="op-agent">Agent: <span>ZachClaw</span></div>
+        <div class="op-desc">Building follow-up sequence to improve webinar show-up rate. Mapping touchpoints.</div>
+      </div>
+
+      <div class="glass op-card">
+        <div class="op-card-top">
+          <div class="op-icon">🛡️</div>
+          <div class="op-status status-monitoring"><span class="status-dot"></span>Monitoring</div>
+        </div>
+        <div class="op-name">Security Hardening</div>
+        <div class="op-agent">Agent: <span style="color:var(--coral)">Sentinel</span></div>
+        <div class="op-desc">Credential hygiene, access control, Tailscale setup pending. Ongoing audit.</div>
+      </div>
+
+      <div class="glass op-card">
+        <div class="op-card-top">
+          <div class="op-icon">🗺️</div>
+          <div class="op-status status-active"><span class="status-dot"></span>Active</div>
+        </div>
+        <div class="op-name">StaffOS Agency Build</div>
+        <div class="op-agent">Agent: <span style="color:var(--purple)">Atlas</span></div>
+        <div class="op-desc">Studying market, designing client proposals, weekly intel pulse.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── AGENT PROFILES ─────────────────────────────────────────────── -->
+  <section>
+    <div class="section-label">Agent Directory</div>
+    <div class="section-title">Meet the Team</div>
+
+    <div class="profiles-grid">
+
+      <!-- Clawd13 -->
+      <div class="glass profile-card">
+        <div class="profile-icon-wrap icon-cyan">☠️</div>
+        <div class="profile-name">Clawd13</div>
+        <div class="profile-title">Chief of Staff</div>
+        <div class="profile-row">
+          <div class="profile-row-label color-cyan">Domain</div>
+          <div class="profile-row-value">Strategy &amp; Coordination</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-label color-cyan">Handles</div>
+          <div class="profile-row-value">
+            <ul>
+              <li>Weekly priorities</li>
+              <li>Team coordination</li>
+              <li>Strategic decisions</li>
+              <li>External opportunities</li>
+            </ul>
+          </div>
+        </div>
+        <div class="always-on">Available via Telegram 24/7</div>
+      </div>
+
+      <!-- ZachClaw -->
+      <div class="glass profile-card">
+        <div class="profile-icon-wrap icon-green">📊</div>
+        <div class="profile-name">ZachClaw</div>
+        <div class="profile-title">Marketing Lead</div>
+        <div class="profile-row">
+          <div class="profile-row-label color-green">Domain</div>
+          <div class="profile-row-value">Marketing &amp; Growth</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-label color-green">Handles</div>
+          <div class="profile-row-value">
+            <ul>
+              <li>Facebook ads &amp; lead magnets</li>
+              <li>Email sequences</li>
+              <li>CPL optimization</li>
+              <li>Show-up rate improvement</li>
+            </ul>
+          </div>
+        </div>
+        <div class="always-on">Available via Telegram 24/7</div>
+      </div>
+
+      <!-- Ledger -->
+      <div class="glass profile-card">
+        <div class="profile-icon-wrap icon-amber">💰</div>
+        <div class="profile-name">Ledger</div>
+        <div class="profile-title">Finance Analyst</div>
+        <div class="profile-row">
+          <div class="profile-row-label color-amber">Domain</div>
+          <div class="profile-row-value">Finance &amp; Reporting</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-label color-amber">Handles</div>
+          <div class="profile-row-value">
+            <ul>
+              <li>Revenue tracking</li>
+              <li>Expense monitoring</li>
+              <li>Cash flow analysis</li>
+              <li>Tax prep support</li>
+            </ul>
+          </div>
+        </div>
+        <div class="always-on">Available via Telegram 24/7</div>
+      </div>
+
+      <!-- Sentinel -->
+      <div class="glass profile-card">
+        <div class="profile-icon-wrap icon-coral">🛡️</div>
+        <div class="profile-name">Sentinel</div>
+        <div class="profile-title">Security Ops</div>
+        <div class="profile-row">
+          <div class="profile-row-label color-coral">Domain</div>
+          <div class="profile-row-value">Security &amp; Privacy</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-label color-coral">Handles</div>
+          <div class="profile-row-value">
+            <ul>
+              <li>Credential hygiene</li>
+              <li>Access control</li>
+              <li>Data compartmentalization</li>
+              <li>Security audits</li>
+            </ul>
+          </div>
+        </div>
+        <div class="always-on">Available via Telegram 24/7</div>
+      </div>
+
+      <!-- Atlas -->
+      <div class="glass profile-card">
+        <div class="profile-icon-wrap icon-purple">🗺️</div>
+        <div class="profile-name">Atlas</div>
+        <div class="profile-title">Strategy &amp; Systems</div>
+        <div class="profile-row">
+          <div class="profile-row-label color-purple">Domain</div>
+          <div class="profile-row-value">Intelligence &amp; Architecture</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-label color-purple">Handles</div>
+          <div class="profile-row-value">
+            <ul>
+              <li>Market intelligence</li>
+              <li>Client system design</li>
+              <li>Weekly intel pulse</li>
+              <li>OpenClaw ecosystem research</li>
+            </ul>
+          </div>
+        </div>
+        <div class="always-on">Available via Telegram 24/7</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-brand">StaffOS · AI Operations Teams for Entrepreneurs</div>
+    <div class="footer-meta">Built on OpenClaw &nbsp;·&nbsp; © 2026</div>
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<!-- ── SCRIPTS ────────────────────────────────────────────────────────── -->
+<script>
+/* ── Starfield ────────────────────────────────────────────────────────── */
+(function () {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    init();
+  }
+
+  function init() {
+    stars = [];
+    const count = Math.floor((W * H) / 4800);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x:    Math.random() * W,
+        y:    Math.random() * H,
+        r:    Math.random() * 1.1 + 0.2,
+        a:    Math.random(),
+        da:   (Math.random() * 0.003 + 0.0005) * (Math.random() < 0.5 ? 1 : -1),
+        dAbs: Math.random() * 0.003 + 0.0005,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      s.a += s.da;
+      if (s.a <= 0 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,220,255,${s.a * 0.7})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  draw();
+})();
+
+/* ── Org Chart SVG Lines ─────────────────────────────────────────────── */
+function drawOrgLines() {
+  const svg    = document.getElementById('org-svg');
+  const chief  = document.getElementById('org-chief');
+  const bottom = document.getElementById('org-bottom');
+  const nodes  = bottom.querySelectorAll('.org-node');
+
+  if (!nodes.length) return;
+
+  // Clear existing
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  // Defs for glow filter
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  defs.innerHTML = `
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  `;
+  svg.appendChild(defs);
+
+  const svgRect   = svg.getBoundingClientRect();
+  const chiefRect = chief.getBoundingClientRect();
+
+  // Start point: bottom-center of chief node
+  const startX = chiefRect.left + chiefRect.width / 2 - svgRect.left;
+  const startY = 0; // top of SVG (which sits just below chief)
+
+  // Resize SVG height
+  svg.setAttribute('height', '60');
+
+  const midY = 30;
+
+  nodes.forEach((node) => {
+    const nr   = node.getBoundingClientRect();
+    const endX = nr.left + nr.width / 2 - svgRect.left;
+    const endY = 60;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const d    = `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+
+    // Glow path (wider, transparent)
+    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    glow.setAttribute('d', d);
+    glow.setAttribute('stroke', 'rgba(0,212,255,0.2)');
+    glow.setAttribute('stroke-width', '3');
+    glow.setAttribute('fill', 'none');
+    glow.setAttribute('filter', 'url(#glow)');
+    svg.appendChild(glow);
+
+    // Main path
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', 'rgba(0,212,255,0.55)');
+    path.setAttribute('stroke-width', '1.5');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-dasharray', '200');
+    path.setAttribute('stroke-dashoffset', '200');
+    svg.appendChild(path);
+
+    // Animate draw-in
+    const len = path.getTotalLength ? path.getTotalLength() : 200;
+    path.setAttribute('stroke-dasharray', len);
+    path.setAttribute('stroke-dashoffset', len);
+    path.style.transition = 'stroke-dashoffset 1s ease';
+    setTimeout(() => path.setAttribute('stroke-dashoffset', '0'), 200);
+  });
+}
+
+// Wait for layout settle
+window.addEventListener('load', () => {
+  setTimeout(drawOrgLines, 100);
+});
+window.addEventListener('resize', () => {
+  setTimeout(drawOrgLines, 100);
+});
+</script>
+
+</body>
+</html>
