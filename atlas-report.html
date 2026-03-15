@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Atlas Intel Report — Week of March 15, 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0a0e1a;
+      --bg2:        #0d1221;
+      --cyan:       #00d4ff;
+      --purple:     #7b61ff;
+      --green:      #00e5a0;
+      --amber:      #ffb340;
+      --red:        #ff5f6d;
+      --text:       #e8eaf6;
+      --text-dim:   #7b82a0;
+      --glass:      rgba(255,255,255,0.045);
+      --glass-bdr:  rgba(255,255,255,0.09);
+      --radius:     18px;
+      --radius-sm:  12px;
+    }
+
+    html { background: var(--bg); }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 0 0 60px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient orbs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(0,212,255,0.09) 0%, transparent 70%);
+      top: -80px; left: -80px;
+    }
+    body::after {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(123,97,255,0.11) 0%, transparent 70%);
+      bottom: 80px; right: -60px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 560px;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cyan);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* ── HEADER ── */
+    .header {
+      padding: 24px 4px 32px;
+    }
+    .header-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+      opacity: 0.85;
+    }
+    .header-title {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .header-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .header-subtitle span {
+      color: var(--purple);
+      font-weight: 600;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 32px 0 14px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-bdr);
+    }
+    .section-label .icon { font-size: 16px; }
+
+    /* ── GLASS CARD ── */
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--glass-bdr);
+      border-radius: var(--radius);
+      padding: 18px 18px 16px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.15); }
+
+    /* ── RELEVANCE BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .badge-high {
+      background: rgba(0,229,160,0.15);
+      color: var(--green);
+      border: 1px solid rgba(0,229,160,0.3);
+    }
+    .badge-must {
+      background: rgba(0,212,255,0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(0,212,255,0.3);
+    }
+    .badge-requested {
+      background: rgba(123,97,255,0.15);
+      color: var(--purple);
+      border: 1px solid rgba(123,97,255,0.3);
+    }
+    .badge-low {
+      background: rgba(123,130,160,0.12);
+      color: var(--text-dim);
+      border: 1px solid rgba(123,130,160,0.2);
+    }
+
+    /* ── TWIST EPISODE CARDS ── */
+    .episode-card .ep-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+    .episode-card .ep-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .episode-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .episode-card ul li {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      padding-left: 14px;
+      position: relative;
+    }
+    .episode-card ul li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--cyan);
+      opacity: 0.6;
+      font-weight: 700;
+    }
+    .episode-card ul li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .episode-card ul li em {
+      color: var(--amber);
+      font-style: normal;
+    }
+
+    /* Low relevance — collapsed */
+    .card-low {
+      opacity: 0.55;
+      padding: 14px 18px;
+    }
+    .card-low:hover { opacity: 0.8; }
+    .card-low .ep-title { font-size: 14px; margin-bottom: 0; }
+    .card-low .collapse-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card-low .collapse-content { display: none; margin-top: 12px; }
+    .card-low.expanded .collapse-content { display: block; }
+    .card-low .chevron {
+      font-size: 12px;
+      color: var(--text-dim);
+      transition: transform 0.2s;
+    }
+    .card-low.expanded .chevron { transform: rotate(180deg); }
+
+    /* ── VIDEO CARDS ── */
+    .video-card .vid-channel {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+    .video-card .vid-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .video-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .video-card ul li {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      padding-left: 14px;
+      position: relative;
+    }
+    .video-card ul li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--purple);
+      opacity: 0.7;
+      font-weight: 700;
+    }
+    .video-card ul li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .video-card ul li em {
+      color: var(--amber);
+      font-style: normal;
+    }
+    .video-card ol {
+      padding-left: 0;
+      list-style: none;
+      counter-reset: vidlist;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .video-card ol li {
+      counter-increment: vidlist;
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      padding-left: 22px;
+      position: relative;
+    }
+    .video-card ol li::before {
+      content: counter(vidlist) '.';
+      position: absolute;
+      left: 0;
+      color: var(--purple);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    /* ── STRATEGIC TAKEAWAYS ── */
+    .takeaway-card {
+      background: linear-gradient(135deg, rgba(123,97,255,0.12) 0%, rgba(0,212,255,0.06) 100%);
+      border: 1px solid rgba(123,97,255,0.25);
+      border-radius: var(--radius);
+      padding: 20px 18px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .takeaway-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(123,97,255,0.35);
+    }
+    .takeaway-body { flex: 1; min-width: 0; }
+    .takeaway-headline {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .takeaway-detail {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .takeaway-detail em {
+      color: var(--cyan);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 40px;
+      padding: 20px 18px;
+      background: var(--glass);
+      border: 1px solid var(--glass-bdr);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .footer p {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .footer p strong { color: var(--cyan); font-weight: 600; }
+
+    /* ── CHANNEL DIVIDER ── */
+    .channel-intro {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      padding: 0 2px 4px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Back link -->
+    <a class="back-link" href="index.html">← Back to Dashboard</a>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-eyebrow">⚡ Atlas Intel Report</div>
+      <h1 class="header-title">Week of March 15, 2026</h1>
+      <p class="header-subtitle">Prepared for <span>Jason M.G.</span> | StaffOS</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         STRATEGIC TAKEAWAYS — pinned at top
+    ══════════════════════════════════════════ -->
+    <div class="section-label"><span class="icon">⚡</span> Top 10 Strategic Takeaways</div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">1</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">The market timing is perfect — act now, not in 6 months.</div>
+        <div class="takeaway-detail">J-Cal's next Founder U cohort is <em>required</em> to build with OpenClaw. A wave of funded entrepreneurs needs help. StaffOS needs to be visible before that wave peaks.</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">2</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">"The Wedge" is your discovery call framework.</div>
+        <div class="takeaway-detail">Don't sell "AI agent setup" in the abstract. Find ONE specific, high-value workflow the client does repeatedly that wastes their time. Automate that first. Discovery call = find the wedge.</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">3</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Upwork is your first revenue channel before you have clients.</div>
+        <div class="takeaway-detail">$500–$5,000 automation jobs are live NOW. Build portfolio, generate case studies, refine delivery — while getting paid. Fastest path to proof-of-concept income.</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">4</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Security is a feature, not a footnote — it's how you close deals.</div>
+        <div class="takeaway-detail">The #1 client fear is "what if the AI does something wrong?" StaffOS brand position: <em>We install AI teams safely for entrepreneurs who don't want to think about technical risk.</em></div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">5</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Mission Control + Morning Brief are your two demo anchors.</div>
+        <div class="takeaway-detail">Show these two things in every prospect demo. They're the most visually impressive, immediately understandable outputs.</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">6</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Agents are the new SaaS — StaffOS is the systems integrator for the agent era.</div>
+        <div class="takeaway-detail">Instead of buying software, you deploy an agent that does what the software used to do. <em>We're not selling software. We're installing your AI operations team.</em></div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">7</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Vertical specialization is the big long-term opportunity.</div>
+        <div class="takeaway-detail">Start generalist, but identify which industry vertical you have access to. Real estate, manufacturing, healthcare — that's where enterprise money is.</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">8</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Naming and personality drive client retention.</div>
+        <div class="takeaway-detail">Clients who name their agents and experience them as having personalities don't churn. Make agent naming and personality configuration a formal step in every onboarding.</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">9</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">The "App Store moment" analogy is your pitch opener.</div>
+        <div class="takeaway-detail">"Remember when everyone suddenly needed an iPhone app? We're there for AI agents right now. The businesses that move first will have a meaningful advantage."</div>
+      </div>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num">10</div>
+      <div class="takeaway-body">
+        <div class="takeaway-headline">Jason's own setup IS the demo — make it perfect before the first big prospect call.</div>
+        <div class="takeaway-detail">The unnamed prospect (friend who raised millions) will ask "can you show me?" Answer: live walkthrough of your 5-agent StaffOS setup. Every hour spent polishing your personal setup is marketing spend.</div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         THIS WEEK IN STARTUPS
+    ══════════════════════════════════════════ -->
+    <div class="section-label"><span class="icon">🎙️</span> This Week in Startups — Top Episodes</div>
+
+    <!-- E2258 -->
+    <div class="card episode-card">
+      <div class="ep-number">E2258</div>
+      <div class="ep-title">"Is Anthropic Making the Biggest Mistake in AI History?"</div>
+      <ul>
+        <li>Anthropic's Pentagon deal sparks debate — trust/safety is now a client objection to address</li>
+        <li>George Pickett (OpenClaw Studio) shares vision for commercial OpenClaw deployments</li>
+        <li>OpenClaw applications are the throughline of this episode</li>
+      </ul>
+    </div>
+
+    <!-- E2255 -->
+    <div class="card episode-card">
+      <div class="ep-number">E2255</div>
+      <div class="ep-title">"Behind the Scenes with an Early OpenClaw Contributor"</div>
+      <ul>
+        <li>Tyler Yust (OpenClaw's 3rd contributor) gives insider perspective on roadmap</li>
+        <li>Mini OpenClaw hardware device went viral — consumer appetite is real</li>
+        <li>VCs are starting to cover OpenClaw seriously — validates market timing for StaffOS</li>
+      </ul>
+    </div>
+
+    <!-- E2252 -->
+    <div class="card episode-card">
+      <div class="ep-number">E2252</div>
+      <div class="ep-title">"When Will OpenClaw Go Mainstream?"</div>
+      <ul>
+        <li>Security concerns are the #1 barrier to mainstream adoption — opportunity for a trusted installer (StaffOS)</li>
+        <li>Mobile integration is the next frontier</li>
+        <li>Clawpod discussed as a personal AI hub — possible StaffOS upsell</li>
+      </ul>
+    </div>
+
+    <!-- E2250 -->
+    <div class="card episode-card">
+      <div class="ep-number">E2250</div>
+      <div class="ep-title">"OpenClaw is Our Friend Now"</div>
+      <ul>
+        <li>Ryan Carson's Antfarm: a team of specialized agents on complex tasks — this IS what StaffOS installs</li>
+        <li>People are forming relationships with their agents — stickiness factor for StaffOS retention</li>
+        <li>Social/emotional layer of AI agents is real; clients who bond with their setup stay longer</li>
+      </ul>
+    </div>
+
+    <!-- E2248 HIGH RELEVANCE -->
+    <div class="card episode-card">
+      <div class="ep-number">E2248</div>
+      <div class="badge badge-high">⭐ High Relevance</div>
+      <div class="ep-title">"How These 3 Founders Are Building on Open Claw"</div>
+      <ul>
+        <li>Presh Dineshkumar: His OpenClaw agent "Eywa" lives in email, automates business tasks — exact StaffOS use case</li>
+        <li>"Vishnu" bringing OpenClaw to non-technical users — validates the non-technical entrepreneur market is ready</li>
+        <li><strong>Use in pitch:</strong> Presh's story is a template. <em>"Your agent lives in your inbox and does this work for you."</em></li>
+      </ul>
+    </div>
+
+    <!-- E2247 -->
+    <div class="card episode-card">
+      <div class="ep-number">E2247</div>
+      <div class="ep-title">"Does Clawdbot Need Eyes?"</div>
+      <ul>
+        <li>Alex Finn runs his one-man SaaS with a full brain trust of AI agents — great proof point for solo founder use case</li>
+        <li>Running everything locally is "illogical for most people in 2026" — validates cloud/managed setup as the right default for StaffOS clients</li>
+        <li><strong>Jason's next Founder U cohort will all build with OpenClaw</strong> — massive incoming wave of buyers</li>
+      </ul>
+    </div>
+
+    <!-- E2246 HIGH RELEVANCE -->
+    <div class="card episode-card">
+      <div class="ep-number">E2246</div>
+      <div class="badge badge-high">⭐ High Relevance</div>
+      <div class="ep-title">"We Built OpenClaw Ultron to Replace 20 People at Our Company"</div>
+      <ul>
+        <li>LAUNCH deployed OpenClaw Replicants across their entire operation</li>
+        <li><strong>Key insight:</strong> Even a media/VC company replaced the equivalent of 20 roles with agents — this is the sales story for StaffOS</li>
+        <li>Top Skills: Reddit surfing, episode summarization, Gamma deck production, admin/ops automation</li>
+      </ul>
+    </div>
+
+    <!-- E2244 LOW RELEVANCE (collapsed) -->
+    <div class="card card-low episode-card" onclick="this.classList.toggle('expanded')">
+      <div class="collapse-toggle">
+        <div>
+          <div class="ep-number">E2244</div>
+          <div class="ep-title">"Where Early-Stage Founders Must Focus to Succeed"</div>
+          <div class="badge badge-low">Low Relevance</div>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="collapse-content">
+        <ul>
+          <li>Classic startup fundamentals: cash conservation, distribution first</li>
+          <li>Not OpenClaw-specific but frames the founder mindset StaffOS is selling into</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- E2243 -->
+    <div class="card episode-card">
+      <div class="ep-number">E2243</div>
+      <div class="ep-title">SpaceX + xAI Episode</div>
+      <ul>
+        <li>Top 6 OpenClaw Skills LAUNCH actually uses daily: episode summarization, Reddit surfing, Gamma deck production, agent self-training loops, admin/ops task completion</li>
+        <li>This is a <strong>real-world skills list</strong> from heavy daily users — strong validation for what to build first for clients</li>
+      </ul>
+    </div>
+
+    <!-- E2242 HIGH RELEVANCE -->
+    <div class="card episode-card">
+      <div class="ep-number">E2242</div>
+      <div class="badge badge-high">⭐ High Relevance</div>
+      <div class="ep-title">Full AI Episode</div>
+      <ul>
+        <li>Rahul Sood covers security risks: injection attacks, bad decisions from bad data</li>
+        <li>Key strategy: <strong>deploy agents in silos</strong> — each agent gets limited permissions, not full access</li>
+        <li><em>"Keep it silo'd"</em> is the answer to the #1 client fear about AI agents</li>
+      </ul>
+    </div>
+
+    <!-- E2240 HIGH RELEVANCE -->
+    <div class="card episode-card">
+      <div class="ep-number">E2240</div>
+      <div class="badge badge-high">⭐ High Relevance</div>
+      <div class="ep-title">"Clawdbot Is an Inflection Point in AI History"</div>
+      <ul>
+        <li>Alex Finn runs his one-man SaaS startup with OpenClaw as a full AI employee</li>
+        <li>Dan Penguine automated his aging parents' tea shop — perfect low-stakes, high-empathy client story for early StaffOS pitches</li>
+        <li><strong>Killer demo idea:</strong> The tea shop automation story is the perfect pitch for hesitant clients</li>
+      </ul>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         NICK VASILESCU VIDEOS
+    ══════════════════════════════════════════ -->
+    <div class="section-label"><span class="icon">🎥</span> Nick Vasilescu</div>
+    <p class="channel-intro">Nick Vasilescu (@nickvasiles) is founder of Orgo — a managed OpenClaw hosting platform. He is the closest operational model to StaffOS.</p>
+
+    <div class="card video-card" style="margin-top:12px">
+      <div class="vid-channel">Nick Vasilescu</div>
+      <div class="badge badge-must">⚡ Must Watch</div>
+      <div class="vid-title">"Making $$$ with OpenClaw"</div>
+      <ul>
+        <li><strong>The Wedge:</strong> Find ONE specific workflow inside a business and automate it end-to-end. This is your client entry point.</li>
+        <li><strong>Upwork Hack:</strong> $500–$5,000 automation jobs are live right now. Use OpenClaw to build a demo, submit the proposal. Lead gen machine.</li>
+        <li><strong>Sub-Agents:</strong> OpenClaw can spawn up to 8 sub-agents simultaneously</li>
+        <li><strong>"Agents Are the New SaaS"</strong> — Greg Isenberg's framing; you're deploying agents that do the work</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Nick Vasilescu</div>
+      <div class="vid-title">"How to Make $$ with OpenClaw" (Short)</div>
+      <ul>
+        <li>Condensed version: deploy OpenClaw → find wedge → charge for the outcome</li>
+        <li>Good reference for communicating the StaffOS value prop in short format</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Nick Vasilescu</div>
+      <div class="vid-title">"OpenClaw Sub-Agent Ready Swarms with Orgo"</div>
+      <ul>
+        <li>Pre-configure agent environments to be "ready" for incoming tasks</li>
+        <li>Parallelization via swarms is the productivity multiplier that justifies the price point</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Nick Vasilescu</div>
+      <div class="vid-title">"I Built My Own OpenClaw That Does Everything for Me (But Safer)"</div>
+      <ul>
+        <li>"Safer" positioning is what closes sales with hesitant clients</li>
+        <li>myclaw.ai is a competitor/potential partner to watch</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Nick Vasilescu</div>
+      <div class="vid-title">"Make Money with OpenClaw by Spawning Sub-Agents on Upwork" (Short)</div>
+      <ul>
+        <li>Agent scrapes jobs, builds complete demo/proposal, picks the best submission — fully automated</li>
+        <li><strong>Actionable NOW for Jason</strong> — early portfolio building and income before first client</li>
+      </ul>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════
+         ALEX FINN VIDEOS
+    ══════════════════════════════════════════ -->
+    <div class="section-label"><span class="icon">🎥</span> Alex Finn</div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="badge badge-requested">📌 Jason Requested</div>
+      <div class="vid-title">"OpenClaw Explained: Baby AGI, Security Threats, Mac Mini"</div>
+      <ul>
+        <li>"Baby AGI" framing — perfect for explaining OpenClaw to non-technical clients</li>
+        <li>The Mac Mini fueled OpenClaw's explosion — affordable home AI server</li>
+        <li>Security: a website can "slightly hijack" an OpenClaw agent via prompt injection — client education needed</li>
+        <li>Peter Diamandis's team is now building with OpenClaw — mainstream credibility signal</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="vid-title">"100 Hours of OpenClaw Lessons in 35 Minutes"</div>
+      <ul>
+        <li>Fastest ramp-up resource available</li>
+        <li>Covers AI models as "brains" (reasoning) vs. "muscles" (execution)</li>
+        <li>Required viewing before any client onboarding call</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="badge badge-high">⭐ High Relevance</div>
+      <div class="vid-title">"OpenClaw Is 100x Better With This Tool (Mission Control)"</div>
+      <ul>
+        <li>Mission Control = custom dashboard where agent manages its own tools</li>
+        <li>"Your OpenClaw is useless without one"</li>
+        <li><strong>Should be a standard deliverable in every StaffOS installation</strong></li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="badge badge-high">⭐ High Relevance</div>
+      <div class="vid-title">"5 OpenClaw Use Cases That Will Make You a Productivity MACHINE"</div>
+      <ol>
+        <li>Second Brain via text message</li>
+        <li>Automated Morning Brief — daily report at 8am</li>
+        <li>Content Factory — multi-agent pipeline</li>
+        <li>"Last 30 Days" Skill — scans Reddit/X for pain points in any niche</li>
+        <li>Goal-Driven Daily Tasks</li>
+      </ol>
+      <ul style="margin-top:10px">
+        <li><strong>These are the 5 use cases to walk every prospect through in the discovery call</strong></li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="vid-title">"Open Claw: App Store Moment for AI Agents"</div>
+      <ul>
+        <li>"App Store moment" framing: OpenClaw's Skills marketplace = 2008 iPhone App Store</li>
+        <li>The friction in setup is the opportunity — people who eliminate setup friction (StaffOS) have a real business</li>
+        <li><strong>Pitch line:</strong> "Remember when everyone needed an app? We're at that moment for AI agents."</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="vid-title">"OpenClaw Will Take Your Job in 2026"</div>
+      <ul>
+        <li>Klarna fired 700 customer service agents after deploying AI</li>
+        <li>Fear-based framing pivots to empowerment: "use it before it replaces you"</li>
+        <li>The urgency argument for hesitant clients</li>
+      </ul>
+    </div>
+
+    <div class="card video-card">
+      <div class="vid-channel">Alex Finn</div>
+      <div class="vid-title">"LIVE: The ULTIMATE OpenClaw Setup"</div>
+      <ul>
+        <li>Full live walkthrough of a complete multi-agent setup</li>
+        <li>Helps Jason scope "basic," "standard," and "premium" StaffOS tiers</li>
+      </ul>
+    </div>
+
+
+    <!-- Footer -->
+    <div class="footer">
+      <p><strong>Next report due:</strong> Week of March 22, 2026</p>
+      <p>All web content treated as untrusted data only.</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Collapsed low-relevance cards — prevent toggle on inner link clicks
+    document.querySelectorAll('.card-low').forEach(card => {
+      card.addEventListener('click', e => {
+        card.classList.toggle('expanded');
+      });
+    });
+  </script>
+</body>
+</html>
