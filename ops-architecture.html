@@ -125,6 +125,37 @@
 @media(max-width:900px){.fgrid{grid-template-columns:repeat(3,1fr)}.roots{grid-template-columns:repeat(3,1fr)}.roots i:nth-child(n+4){display:none}}
 @media(max-width:560px){.city{padding:14px 14px 0;border-radius:20px}.foundation{margin:0 -14px;padding:16px 14px}.plugs{margin:0 -14px;border-radius:0 0 20px 20px;gap:7px}.plug-label{width:100%;text-align:center}.roots{grid-template-columns:1fr 1fr}.roots i:nth-child(n+3){display:none}.fgrid{grid-template-columns:1fr 1fr}.asset{align-items:flex-start}.inside-files{padding:14px}}
 @media(prefers-reduced-motion:reduce){.fbtn{transition:none;transform:none!important}}
+
+.fmodal{max-height:90vh;max-height:90dvh;max-width:min(620px,calc(100vw - 24px));margin:auto;overflow:visible}
+.fmodal .panel{max-height:90vh;max-height:90dvh;display:flex;flex-direction:column;overflow:hidden;overflow-wrap:anywhere}
+.fmodal .panel>.eyebrow,.fmodal .panel>h2,.fmodal .panel>.panel-sub{flex:0 0 auto;padding-right:44px}
+.fmodal .facts{overflow-y:auto;min-height:0;flex:1 1 auto;overscroll-behavior:contain;padding-bottom:2px}
+html.lock,html.lock body{overflow:hidden}
+.popover{overflow-y:auto;overscroll-behavior:contain}
+.src.pop.pop-up .popover{top:auto;bottom:calc(100% + 10px)}
+.src.pop.pop-up .popover:before{top:auto;bottom:-7px;transform:rotate(225deg)}
+.cva{display:grid;grid-template-columns:1fr 1.35fr;gap:16px}
+.lane{border:1px solid var(--line);background:#fff;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(31,45,75,.06)}
+.lane.agentl{background:linear-gradient(145deg,#101c34,#172a4d);color:#fff;border-color:#172a4d}
+.lane h3{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#49658e}.agentl h3{color:#f4c95d}
+.lane .tag{display:inline-block;margin:6px 0 10px;font-size:11px;font-weight:800;border-radius:99px;padding:4px 9px;background:#f1f3f7;color:#677188}
+.agentl .tag{background:rgba(244,201,93,.15);color:#f4c95d}
+.stages{position:relative;display:grid;gap:7px;padding-left:22px}
+.stages:before{content:"";position:absolute;left:7px;top:8px;bottom:8px;border-left:2px dashed #cad3e1}.agentl .stages:before{border-color:rgba(255,255,255,.25)}
+.stg{border:1px solid var(--line);background:#f8f9fb;border-radius:11px;padding:8px 11px;font-size:13px;transition:.3s background,.3s box-shadow,.3s opacity;opacity:.55}
+.agentl .stg{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2)}
+.stg b{display:block;font-size:13px}.stg small{display:block;color:var(--muted);font-size:12px}.agentl .stg small{color:#bfcbe0}
+.stg.on{opacity:1;background:#fff3bf;border-color:#e6ca70;box-shadow:0 0 0 3px rgba(244,201,93,.35);color:#172a4d}.stg.on small{color:#5b4a17}
+.stg.done{opacity:1}
+.stg.ans{font-weight:600}
+.packet{position:absolute;left:2px;top:8px;width:12px;height:12px;border-radius:50%;background:#f4c95d;box-shadow:0 0 12px 4px rgba(244,201,93,.7);transition:top .6s ease;opacity:0}
+.packet.go{opacity:1}
+.lane-cap{min-height:36px;margin:10px 0 0;font-size:13px;color:var(--muted)}.agentl .lane-cap{color:#bfcbe0}
+.cva-ctrl{display:flex;gap:9px;justify-content:center;margin-top:12px}
+.cva-ctrl button{border:1px solid #cdd4e1;background:#fff;border-radius:99px;padding:9px 16px;font-weight:800;cursor:pointer}.cva-ctrl button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cva-prompt{font-size:13px;font-weight:700;background:#edf3ff;border:1px solid #cdd9f2;color:#315bb0;border-radius:10px;padding:8px 11px}
+@media(max-width:780px){.cva{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.packet{display:none}.stg{opacity:1;transition:none}.cva-ctrl{display:none}}
 </style></head>
 <body><div class="shell">
 <header class="top"><div class="brand"><span class="mark">MC</span><span>Mission Control</span><b class="demo">SAMPLE ARCHITECTURE</b></div></header>
@@ -201,10 +232,37 @@
 <p class="ctx-note">Illustrative only: generic examples, not real files, paths, or private data.</p>
 </div></section>
 
+
+<div class="link" aria-hidden="true"><i></i><span>↓ Same prompt, two very different results</span></div>
+
+<section class="layer" aria-label="Chat window versus agent" id="cvaSec">
+<div class="layer-label"><span class="layer-num">4</span><h2>Chat window vs. agent</h2><span class="sub">Why the files and memory matter</span></div>
+<div class="cva">
+<div class="lane chatl"><h3>Plain chat window</h3><span class="tag">No memory, no context, no rules</span>
+<div class="stages" id="laneA"><span class="packet"></span>
+<div class="stg"><b>Prompt</b><small class="cva-prompt">“Book a consult for a new client and send the intake form.”</small></div>
+<div class="stg"><b>Model</b><small>Sees only the words you typed.</small></div>
+<div class="stg ans"><b>Generic answer</b><small>“Here are some general tips for booking consults and writing intake forms…”</small></div>
+</div><p class="lane-cap" id="capA" aria-live="polite">Press Run prompt to compare.</p></div>
+<div class="lane agentl"><h3>Agent</h3><span class="tag">Your files, memory, and rules</span>
+<div class="stages" id="laneB"><span class="packet"></span>
+<div class="stg"><b>Prompt</b><small class="cva-prompt">“Book a consult for a new client and send the intake form.”</small></div>
+<div class="stg"><b>USER.md</b><small>Who you are and how you like to work.</small></div>
+<div class="stg"><b>SOUL.md</b><small>Your voice and values.</small></div>
+<div class="stg"><b>AGENTS.md</b><small>The job, the rules, and when to ask for approval.</small></div>
+<div class="stg"><b>MEMORY.md + shared context</b><small>Your usual consult slots and the intake template.</small></div>
+<div class="stg"><b>Inference layer</b><small>The model reasons with all of that context.</small></div>
+<div class="stg ans"><b>Specific answer + approval</b><small>“Drafted a consult in your usual slot and the intake form in your voice. Approve to send?”</small></div>
+</div><p class="lane-cap" id="capB" aria-live="polite">Same prompt, with everything the agent knows.</p></div>
+</div>
+<div class="cva-ctrl"><button class="primary" id="cvaRun">Run prompt</button><button id="cvaReplay">Replay</button></div>
+<p class="note">Illustrative sample: generic prompt and answers, no real clients or data.</p>
+</section>
+
 <div class="link" aria-hidden="true"><i></i><span>↓ Any outbound action stops here first</span></div>
 
 <section class="layer" aria-label="Approval gate">
-<div class="layer-label"><span class="layer-num">4</span><h2>Approval gate</h2><span class="sub">You stay in control</span></div>
+<div class="layer-label"><span class="layer-num">5</span><h2>Approval gate</h2><span class="sub">You stay in control</span></div>
 <div class="gate-box"><span class="approval-icon" aria-hidden="true">✓</span><div class="txt"><strong>Asks before acting</strong><span>Agents prepare drafts. Nothing leaves until you approve it.</span></div><div class="outs"><span>✉ Mail</span><span>☏ Phone</span><span>📣 Posts</span></div></div>
 <div class="gate-flow"><div class="flow-step">Agent drafts</div><span class="arrow">→</span><div class="flow-step yes">You approve</div><span class="arrow">→</span><div class="flow-step">Sent + receipt</div></div>
 </section>
@@ -232,5 +290,24 @@ const F={'USER.md':['About you','Tells every agent who you are: your role, your 
 const fm=document.querySelector('#fileModal');let fmTrig=null;
 document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',()=>{const d=F[b.dataset.f];fmTrig=b;document.querySelector('#fmTitle').textContent=b.dataset.f;document.querySelector('#fmSub').textContent=d[0];document.querySelector('#fmUse').textContent=d[1];document.querySelector('#fmEx').innerHTML=d[2].map(x=>'<li>'+x+'</li>').join('');document.querySelector('#fmWhy').textContent=d[3]+' These files compound over time and move with you to any harness.';fm.showModal();fm.querySelector('.close').focus()}));
 fm.querySelector('.close').addEventListener('click',()=>fm.close());fm.addEventListener('click',e=>{if(e.target===fm)fm.close()});fm.addEventListener('close',()=>{fmTrig&&fmTrig.focus();fmTrig=null});
+</script>
+<script>
+(()=>{const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lanes=[['#laneA','#capA',['A plain chat window gets only your words.','The model guesses with no context.','Result: a generic answer you still have to act on yourself.']],
+['#laneB','#capB',['The agent starts with the same prompt.','USER.md: it knows who you are.','SOUL.md: it writes in your voice.','AGENTS.md: it follows your rules and approval steps.','Memory: it recalls your usual slots and templates.','Inference: the model reasons with all of it.','Result: specific work, ready for your approval.']]];
+let timers=[];
+function reset(){timers.forEach(clearTimeout);timers=[];lanes.forEach(([l])=>{const L=document.querySelector(l);L.querySelectorAll('.stg').forEach(x=>x.classList.remove('on','done'));L.querySelector('.packet').classList.remove('go')})}
+function run(){reset();lanes.forEach(([l,c,caps])=>{const L=document.querySelector(l),st=[...L.querySelectorAll('.stg')],pk=L.querySelector('.packet'),cap=document.querySelector(c);
+st.forEach((x,i)=>timers.push(setTimeout(()=>{st.forEach(y=>y.classList.remove('on'));for(let j=0;j<i;j++)st[j].classList.add('done');x.classList.add('on');pk.classList.add('go');pk.style.top=(x.offsetTop+x.offsetHeight/2-6)+'px';cap.textContent=caps[i]},i*1300)));
+timers.push(setTimeout(()=>{st.forEach(y=>y.classList.add('done'));pk.classList.remove('go')},st.length*1300+600))})}
+if(RM){document.querySelectorAll('#cvaSec .stg').forEach(x=>x.classList.add('done'));return}
+document.querySelector('#cvaRun').addEventListener('click',run);document.querySelector('#cvaReplay').addEventListener('click',run);
+let played=false;const io=new IntersectionObserver(e=>{if(!played&&e[0].isIntersecting){played=true;run();io.disconnect()}},{threshold:.45});io.observe(document.querySelector('#cvaSec'));
+// popover placement
+function place(t){const pop=t.querySelector('.popover');t.classList.remove('pop-up');pop.style.maxHeight='';const r=t.getBoundingClientRect(),ph=pop.scrollHeight+12,below=innerHeight-r.bottom-12,above=r.top-12;if(ph>below&&above>below)t.classList.add('pop-up');pop.style.maxHeight=Math.max(160,(t.classList.contains('pop-up')?above:below)-14)+'px'}
+document.querySelectorAll('.src.pop').forEach(t=>['mouseenter','focus','click'].forEach(ev=>t.addEventListener(ev,()=>place(t))));
+})();
+// scroll lock for dialogs
+document.querySelectorAll('dialog').forEach(d=>{new MutationObserver(()=>document.documentElement.classList.toggle('lock',!!document.querySelector('dialog[open]'))).observe(d,{attributes:true,attributeFilter:['open']})});
 </script>
 </body></html>
