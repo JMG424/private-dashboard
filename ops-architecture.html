@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; font-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Mission Control — System Architecture (Sample)</title>
+<style>
+:root{--ink:#182238;--muted:#677188;--paper:#fbfaf7;--card:#fff;--line:#dfe3eb;--navy:#182c55;--shadow:0 18px 45px rgba(31,45,75,.10);--focus:#155eef}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 50% 0,#edf4ff 0,transparent 34rem),var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;color:inherit}button:focus-visible{outline:3px solid var(--focus);outline-offset:3px}.skip{position:fixed;top:-5rem;left:1rem;z-index:20;background:#fff;padding:.7rem 1rem;border-radius:.5rem}.skip:focus{top:1rem}.shell{max-width:1240px;margin:auto;padding:24px 30px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:11px;font-weight:800}.mark{width:36px;height:36px;border-radius:12px;background:var(--navy);color:white;display:grid;place-items:center;font-size:13px;letter-spacing:.04em}.demo{font-size:11px;letter-spacing:.12em;font-weight:800;color:#765d17;background:#fff3bf;border:1px solid #e6ca70;padding:5px 8px;border-radius:99px}.how{border:1px solid #cdd4e1;background:#fff;border-radius:99px;padding:9px 14px;font-weight:700;cursor:pointer}.hero{text-align:center;max-width:760px;margin:54px auto 30px}.eyebrow{margin:0 0 10px;color:#49658e;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.hero h1{font-size:clamp(34px,5vw,60px);line-height:1.02;letter-spacing:-.045em;margin:0}.hero p{font-size:clamp(17px,2vw,21px);color:var(--muted);max-width:650px;margin:18px auto 0}.org{position:relative;padding:2px 0 20px}.lead-wrap{display:flex;justify-content:center;position:relative;padding-bottom:62px}.lead-wrap:after{content:"";position:absolute;left:50%;bottom:0;height:62px;border-left:2px solid #cad3e1}.agent{--tone:#3768c5;--soft:#edf3ff;width:100%;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:20px;text-align:left;box-shadow:0 8px 24px rgba(31,45,75,.06);cursor:pointer;transition:.18s transform,.18s box-shadow,.18s border-color;position:relative}.agent:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--tone)}.agent[aria-expanded="true"]{border-color:var(--tone);box-shadow:0 0 0 3px var(--soft),var(--shadow)}.lead{max-width:440px;background:linear-gradient(135deg,#fff,var(--soft))}.agent-top{display:flex;align-items:center;gap:13px}.avatar{width:51px;height:51px;flex:0 0 auto;border-radius:16px;background:var(--soft);color:var(--tone);display:grid;place-items:center;font-size:25px;border:1px solid color-mix(in srgb,var(--tone) 22%,white)}.name{font-size:13px;font-weight:800;color:var(--tone);letter-spacing:.08em;text-transform:uppercase}.role{display:block;font-size:20px;line-height:1.15;margin-top:3px;letter-spacing:-.02em}.promise{margin:14px 0 0;color:var(--muted);font-size:14px}.open{position:absolute;top:18px;right:18px;color:var(--tone);font-weight:900}.team{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;position:relative}.team:before{content:"";position:absolute;left:16.66%;right:16.66%;top:-32px;border-top:2px solid #cad3e1}.team .agent:before{content:"";position:absolute;left:50%;top:-34px;height:34px;border-left:2px solid #cad3e1}.team .agent:nth-child(n+4){margin-top:12px}.team .agent:nth-child(n+4):before{display:none}.approval{display:flex;align-items:center;gap:16px;max-width:880px;margin:34px auto 0;padding:15px 18px;background:#fff8e7;border:1px solid #ecd28a;border-radius:16px}.approval-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#ffe59c}.approval strong{display:block}.approval span{color:#71684f;font-size:14px}.approval button{margin-left:auto;border:0;background:transparent;font-weight:800;white-space:nowrap;cursor:pointer}.note{text-align:center;color:#8a91a0;font-size:12px;margin:24px 0 0}.modal{border:0;padding:0;background:transparent;max-width:min(620px,calc(100vw - 28px));width:100%}.modal::backdrop{background:rgba(17,28,50,.56);backdrop-filter:blur(4px)}.panel{background:#fff;border-radius:24px;padding:26px;box-shadow:0 30px 90px #10182b66;position:relative}.close{position:absolute;right:17px;top:15px;border:0;background:#f1f3f7;border-radius:50%;width:35px;height:35px;cursor:pointer;font-size:18px}.panel-head{display:flex;gap:15px;align-items:center;padding-right:38px}.panel h2{margin:0;font-size:26px;line-height:1.1}.panel-sub{color:var(--muted);margin:4px 0 0}.facts{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:22px}.fact{background:#f7f8fb;border:1px solid #e5e8ef;padding:16px;border-radius:14px}.fact h3{font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px;color:#69748a}.fact p,.fact ul{margin:0;font-size:14px}.fact ul{padding-left:18px}.fact li+li{margin-top:6px}.benefit{background:var(--soft);border-color:color-mix(in srgb,var(--tone) 18%,white)}.gate{grid-column:1/-1;background:#fff8e7;border-color:#ecd28a}.flow{display:flex;gap:8px;margin-top:22px;align-items:stretch}.flow-step{flex:1;text-align:center;padding:14px 8px;border:1px solid #dfe4ed;border-radius:13px;background:#f8f9fb;font-size:13px;font-weight:700}.arrow{align-self:center;color:#99a3b5}.flow-note{text-align:center;color:var(--muted);margin:16px 12px 0;font-size:14px}@media(max-width:780px){.shell{padding:18px 18px 38px}.hero{margin-top:40px}.team{grid-template-columns:repeat(2,1fr)}.team:before{left:25%;right:25%}.team .agent:nth-child(n+3){margin-top:12px}.team .agent:nth-child(n+3):before{display:none}.facts{grid-template-columns:1fr}.gate{grid-column:auto}.flow{flex-direction:column}.arrow{transform:rotate(90deg)}.approval{align-items:flex-start}.approval button{display:none}}@media(max-width:470px){.shell{padding:15px 12px 32px}.brand>span:not(.mark){display:none}.hero{margin:34px auto 24px}.hero h1{font-size:38px}.hero p{font-size:16px}.lead-wrap{padding-bottom:42px}.lead-wrap:after{height:42px}.team{grid-template-columns:1fr;gap:12px}.team:before,.team .agent:before{display:none}.agent{padding:16px;border-radius:17px}.team .agent:nth-child(n){margin-top:0}.avatar{width:45px;height:45px;font-size:22px}.role{font-size:18px}.promise{margin-top:10px}.approval{margin-top:22px}.panel{padding:22px 17px;border-radius:20px}.panel h2{font-size:22px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<style>
+.hero{margin:44px auto 26px}
+.layer{max-width:1080px;margin:0 auto;position:relative}
+.layer-label{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.layer-num{width:26px;height:26px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800}
+.layer-label h2{margin:0;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#49658e}
+.layer-label span.sub{color:var(--muted);font-size:14px}
+.box{--tone:#3768c5;--soft:#edf3ff;border:1px solid var(--line);background:var(--card);border-radius:18px;padding:16px 18px;box-shadow:0 8px 24px rgba(31,45,75,.06);position:relative}
+.box .agent-top{gap:12px}.box .avatar{width:44px;height:44px;font-size:21px;border-radius:14px}
+.box .role{font-size:18px}.box .promise{display:block;margin-top:10px}
+.fronts{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:760px;margin:0 auto}
+.link{display:flex;flex-direction:column;align-items:center;margin:6px auto;height:58px;position:relative;justify-content:center}
+.link:before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:2px solid #cad3e1}
+.link span{position:relative;background:var(--paper);color:var(--muted);font-size:12px;font-weight:700;padding:3px 10px;border:1px solid var(--line);border-radius:99px;white-space:nowrap}
+.link i{position:absolute;left:calc(50% - 4px);top:0;width:10px;height:10px;margin-left:-1px;border-radius:50%;background:#82a9ef;animation:drop 2.4s linear infinite}
+.link.up i{animation-name:rise}
+@keyframes drop{0%{top:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:calc(100% - 10px);opacity:0}}
+@keyframes rise{0%{top:calc(100% - 10px);opacity:0}15%{opacity:1}85%{opacity:1}100%{top:0;opacity:0}}
+.lead-box{max-width:440px;margin:0 auto;background:linear-gradient(135deg,#fff,var(--soft))}
+.spec-wrap{position:relative;padding-top:30px}
+.spec-wrap:before{content:"";position:absolute;left:50%;top:0;height:30px;border-left:2px solid #cad3e1}
+.specs{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;position:relative;padding-top:18px}
+.specs:before{content:"";position:absolute;left:10%;right:10%;top:0;border-top:2px solid #cad3e1}
+.specs .box{padding:13px 13px 14px}
+.specs .box:before{content:"";position:absolute;left:50%;top:-19px;height:18px;border-left:2px solid #cad3e1}
+.specs .avatar{width:36px;height:36px;font-size:17px;border-radius:11px}
+.specs .name{font-size:11px}.specs .role{font-size:15px}.specs .promise{font-size:13px;margin-top:8px}
+.ctx{background:linear-gradient(145deg,#101c34,#172a4d);border-radius:22px;padding:22px;color:#fff}
+.sources{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.src{border:1px solid rgba(255,255,255,.23);background:rgba(255,255,255,.08);border-radius:14px;padding:13px 12px;transition:.28s background,.28s transform,.28s color}
+.src b{display:block;font-size:14px}.src small{display:block;color:#bfcbe0;font-size:12px;margin-top:5px;line-height:1.35}
+.src .ico{font-size:18px;display:block;margin-bottom:6px;color:#f4c95d}
+.src.active{background:#fff;color:#172a4d;transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.28)}.src.active small{color:#596882}
+.chips{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.chips span{font-size:11px;font-weight:800;border-radius:7px;padding:3px 7px;background:#20375f;border:1px solid rgba(255,255,255,.24);color:#fff}
+.src.active .chips span{background:#f4c95d;color:#172a4d;border-color:#e6ca70}
+.merge{display:flex;justify-content:center;color:#82a9ef;font-size:22px;margin:8px 0}
+.shared{max-width:520px;margin:0 auto;text-align:center;background:#f4c95d;color:#172a4d;border-radius:14px;padding:13px 16px;font-weight:800}
+.shared small{display:block;font-weight:600;color:#5b4a17;font-size:13px;margin-top:3px}
+.ctx-note{color:#bfcbe0;font-size:12px;margin:12px 0 0;text-align:center}
+.gate-box{display:flex;align-items:center;gap:16px;padding:16px 18px;background:#fff8e7;border:1px solid #ecd28a;border-radius:18px}
+.gate-box strong{display:block}.gate-box .txt span{color:#71684f;font-size:14px}
+.outs{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.outs span{background:#fff;border:1px solid #ecd28a;border-radius:99px;padding:6px 11px;font-size:13px;font-weight:800;color:#6a5413}
+.gate-flow{display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;gap:8px;align-items:center;margin-top:12px}
+.gate-flow .flow-step{background:#fff;padding:12px 8px}.gate-flow .arrow{text-align:center;transform:none!important}
+.gate-flow .flow-step.yes{background:#fff3bf;border-color:#e6ca70}
+@media(max-width:900px){.sources{grid-template-columns:repeat(3,1fr)}.specs{grid-template-columns:repeat(3,1fr)}.specs:before,.specs .box:before{display:none}.specs{padding-top:0}}
+@media(max-width:560px){.fronts{grid-template-columns:1fr;gap:12px}.specs{grid-template-columns:1fr 1fr;gap:10px}.specs .box:last-child{grid-column:1/-1}.sources{grid-template-columns:1fr 1fr}.src.mem{grid-column:1/-1}.chips{flex-direction:row;flex-wrap:wrap}.ctx{padding:14px}.gate-box{flex-direction:column;align-items:flex-start}.outs{margin-left:0}.gate-flow{grid-template-columns:1fr 14px 1fr 14px 1fr;gap:4px}.gate-flow .flow-step{font-size:12px;padding:10px 4px}.link span{white-space:normal;text-align:center;max-width:86%}.hero h1{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.link i{animation:none;display:none}.src{transition:none}}
+
+.src.pop{position:relative;cursor:pointer;outline:none}.src.pop:hover,.src.pop:focus,.src.pop.open{z-index:50}.ctx,.sources{position:relative}.ctx{z-index:5}
+.src.pop:focus-visible{box-shadow:0 0 0 3px #82a9ef}
+.src .hint{display:block;margin-top:8px;font-size:11px;font-weight:800;color:#82a9ef;letter-spacing:.04em}
+.src.active .hint{color:#315bb0}
+.popover{position:absolute;top:calc(100% + 10px);left:0;z-index:30;width:300px;max-width:calc(100vw - 32px);background:#fff;color:var(--ink);border-radius:16px;padding:14px;box-shadow:0 24px 60px rgba(8,15,30,.45);border:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(6px);transition:.2s opacity,.2s transform,.2s visibility;pointer-events:none;text-align:left}
+.popover:before{content:"";position:absolute;top:-7px;left:26px;width:12px;height:12px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.src.pop:hover .popover,.src.pop:focus .popover,.src.pop.open .popover{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+.pop-title{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#49658e;margin:0 0 8px}
+.pop-line{font-size:13px;color:var(--muted);margin:8px 0 0}
+.gb-in{display:flex;gap:6px;justify-content:center}
+.gb-in span{font-size:11px;font-weight:800;padding:4px 8px;border-radius:7px;background:#edf3ff;color:#315bb0;border:1px solid #cdd9f2}
+.gb-arrow{text-align:center;color:#677188;font-size:11px;font-weight:700;line-height:1.2;margin:5px 0}
+.gb-index{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:10px;background:#172a4d}
+.gb-index i{width:9px;height:9px;border-radius:50%;background:#4b6696}
+.gb-index i:nth-child(even){width:16px;height:2px;border-radius:2px;background:#4b6696}
+.gb-query{margin-top:6px;font-size:12px;background:#f7f8fb;border:1px solid #e5e8ef;border-radius:10px;padding:7px 9px}
+.gb-query b{color:#315bb0;display:inline;font-size:12px}
+.gb-hit{margin-top:6px;font-size:12px;background:#fff3bf;border:1px solid #e6ca70;border-radius:10px;padding:7px 9px;color:#5b4a17}
+.vg{display:block;width:100%;height:auto}
+.vg line{stroke:#cad3e1;stroke-width:2}
+.vg circle{fill:#edf3ff;stroke:#315bb0;stroke-width:1.5}
+.vg circle.hub{fill:#172a4d;stroke:#172a4d}
+.vg text{font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#182238;text-anchor:middle}
+.vg text.hubt{fill:#fff}
+.src.pop:hover .anim,.src.pop:focus .anim,.src.pop.open .anim{animation-play-state:running}
+.anim{animation-play-state:paused;animation-duration:6s;animation-iteration-count:infinite;animation-timing-function:ease}
+.gb-in span.anim{animation-name:gbIn}.gb-in span.anim:nth-child(2){animation-delay:.3s}
+.gb-index i.anim{animation-name:gbDot}.gb-index i.anim:nth-child(3){animation-delay:.2s}.gb-index i.anim:nth-child(5){animation-delay:.4s}.gb-index i.anim:nth-child(7){animation-delay:.6s}
+.gb-query.anim{animation-name:gbQ}.gb-hit.anim{animation-name:gbHit}
+@keyframes gbIn{0%{opacity:.35;transform:translateY(-4px)}12%,100%{opacity:1;transform:none}}
+@keyframes gbDot{0%,15%{background:#4b6696}28%,100%{background:#f4c95d}}
+@keyframes gbQ{0%,35%{opacity:.35}45%,100%{opacity:1}}
+@keyframes gbHit{0%,55%{opacity:.25;transform:translateY(-3px)}68%,100%{opacity:1;transform:none}}
+.vg line.anim{animation-name:vgLine}.vg line.anim:nth-of-type(2){animation-delay:.8s}.vg line.anim:nth-of-type(3){animation-delay:1.6s}.vg line.anim:nth-of-type(4){animation-delay:2.4s}.vg line.anim:nth-of-type(5){animation-delay:3.2s}.vg line.anim:nth-of-type(6){animation-delay:4s}
+@keyframes vgLine{0%,100%{stroke:#cad3e1}8%,22%{stroke:#f4c95d;stroke-width:3}}
+@media(max-width:900px){.src.pop:nth-child(2) .popover{left:auto;right:0}.src.pop:nth-child(2) .popover:before{left:auto;right:26px}}
+@media(max-width:560px){.popover{width:min(300px,calc(100vw - 40px))}.src.pop:nth-child(2) .popover{left:auto;right:0}}
+@media(prefers-reduced-motion:reduce){.anim{animation:none!important}.gb-index i{background:#f4c95d}.popover{transition:none;transform:none}}
+</style></head>
+<body><div class="shell">
+<header class="top"><div class="brand"><span class="mark">MC</span><span>Mission Control</span><b class="demo">SAMPLE ARCHITECTURE</b></div></header>
+<main>
+<section class="hero"><p class="eyebrow">The whole system at a glance</p><h1>How your agent team fits together.</h1><p>You talk to one system. A coordinator brings in specialists, they all draw on shared context, and nothing goes out without your approval.</p></section>
+
+<section class="layer" aria-label="Front ends">
+<div class="layer-label"><span class="layer-num">1</span><h2>Front ends</h2><span class="sub">How you talk to the system</span></div>
+<div class="fronts">
+<div class="box" style="--tone:#315bb0;--soft:#edf3ff"><span class="agent-top"><span class="avatar" aria-hidden="true">◉</span><span><span class="name">Grok Bot</span><strong class="role">App + voice</strong></span></span><span class="promise">Type or talk to your agents from desktop or phone.</span></div>
+<div class="box" style="--tone:#2a7fb8;--soft:#eaf5fc"><span class="agent-top"><span class="avatar" aria-hidden="true">➤</span><span><span class="name">Telegram</span><strong class="role">Hermes chat</strong></span></span><span class="promise">Quick messages to Hermes, wherever you are.</span></div>
+</div></section>
+
+<div class="link" aria-hidden="true"><i></i><span>↓ Your request goes to the coordinator</span></div>
+
+<section class="layer" aria-label="Coordinator and agents">
+<div class="layer-label"><span class="layer-num">2</span><h2>Coordinator + agents</h2><span class="sub">Who does the work</span></div>
+<div class="box lead-box" style="--tone:#315bb0;--soft:#edf3ff"><span class="agent-top"><span class="avatar" aria-hidden="true">✦</span><span><span class="name">Chief</span><strong class="role">WDAI</strong></span></span><span class="promise">Understands the goal, routes it to the right specialist, returns one answer.</span></div>
+<div class="spec-wrap"><div class="specs">
+<div class="box" style="--tone:#a56a12;--soft:#fff6df"><span class="agent-top"><span class="avatar" aria-hidden="true">▤</span><span><span class="name">Ledger</span><strong class="role">Finance</strong></span></span><span class="promise">Clear, reviewable money choices.</span></div>
+<div class="box" style="--tone:#9b4165;--soft:#fff0f6"><span class="agent-top"><span class="avatar" aria-hidden="true">◆</span><span><span class="name">MGC</span><strong class="role">Business Ops</strong></span></span><span class="promise">Keeps the guidance business moving.</span></div>
+<div class="box" style="--tone:#167b68;--soft:#eaf9f5"><span class="agent-top"><span class="avatar" aria-hidden="true">♻</span><span><span class="name">Mimi’s Market</span><strong class="role">Resale</strong></span></span><span class="promise">Repeatable resale operations.</span></div>
+<div class="box" style="--tone:#31718c;--soft:#eaf6fa"><span class="agent-top"><span class="avatar" aria-hidden="true">♥</span><span><span class="name">Health Coach</span><strong class="role">Wellness</strong></span></span><span class="promise">Healthier routines, not medical care.</span></div>
+<div class="box" style="--tone:#7252a6;--soft:#f4effc"><span class="agent-top"><span class="avatar" aria-hidden="true">↻</span><span><span class="name">Helper</span><strong class="role">Improvement</strong></span></span><span class="promise">Proposes safer, smarter workflows.</span></div>
+</div></div></section>
+
+<div class="link up" aria-hidden="true"><i></i><span>↑ Agents read shared context</span></div>
+
+<section class="layer" aria-label="Context layer">
+<div class="layer-label"><span class="layer-num">3</span><h2>Context layer</h2><span class="sub">Why agents remember</span></div>
+<div class="ctx">
+<div class="sources">
+<div class="src pop" tabindex="0" role="button" aria-expanded="false" aria-label="Obsidian Vault: show how notes link"><span class="ico" aria-hidden="true">◈</span><b>Obsidian Vault</b><small>Notes, people, projects, day-packs. The source of truth.</small><span class="hint">Hover or tap to see inside</span>
+<span class="popover" role="note"><p class="pop-title">Linked notes</p>
+<svg class="vg" viewBox="0 0 270 150" aria-hidden="true"><line class="anim" x1="135" y1="75" x2="50" y2="30"/><line class="anim" x1="135" y1="75" x2="220" y2="30"/><line class="anim" x1="135" y1="75" x2="220" y2="122"/><line class="anim" x1="135" y1="75" x2="50" y2="122"/><line class="anim" x1="50" y1="30" x2="220" y2="30"/><line class="anim" x1="50" y1="122" x2="220" y2="122"/>
+<circle class="hub" cx="135" cy="75" r="24"/><text class="hubt" x="135" y="79">Vault</text>
+<circle cx="50" cy="30" r="21"/><text x="50" y="34">People</text><circle cx="220" cy="30" r="21"/><text x="220" y="34">Projects</text>
+<circle cx="220" cy="122" r="21"/><text x="220" y="126">Decisions</text><circle cx="50" cy="122" r="21"/><text x="50" y="119">Daily</text><text x="50" y="130">notes</text></svg>
+<p class="pop-line"><strong>Source of truth agents read from.</strong> Sample labels only.</p></span></div>
+<div class="src pop" tabindex="0" role="button" aria-expanded="false" aria-label="GBrain: show how search works"><span class="ico" aria-hidden="true">⌕</span><b>GBrain</b><small>Searchable memory and archive built from the vault and recordings.</small><span class="hint">Hover or tap to see inside</span>
+<span class="popover" role="note"><p class="pop-title">How GBrain finds things</p>
+<span class="gb-in"><span class="anim">Transcripts</span><span class="anim">Notes</span></span>
+<span class="gb-arrow" style="display:block" aria-hidden="true">↓ indexed into connected memory</span>
+<span class="gb-index" aria-hidden="true"><i class="anim"></i><i></i><i class="anim"></i><i></i><i class="anim"></i><i></i><i class="anim"></i></span>
+<span class="gb-query anim" style="display:block"><b>Agent asks:</b> “What did Michelle decide about the launch?”</span>
+<span class="gb-hit anim" style="display:block"><strong>Match found:</strong> Decision note · Launch plan (sample memory chunk)</span>
+<span class="pop-line" style="display:block">Agents get the right memory back, not the whole archive.</span></span></div>
+<div class="src"><span class="ico" aria-hidden="true">✉</span><b>Agent Mail</b><small>Email threads and drafts. Agents draft, you approve sends.</small></div>
+<div class="src"><span class="ico" aria-hidden="true">☏</span><b>Agent Phone</b><small>Calls, texts, and voice. Agents draft, you approve outbound.</small></div>
+<div class="src mem"><span class="ico" aria-hidden="true">≡</span><b>Memory layers</b><small>Short-term, per-agent, and shared memory.</small><span class="chips"><span>Conversation</span><span>Agent</span><span>Shared</span></span></div>
+</div>
+<div class="merge" aria-hidden="true">↓</div>
+<div class="shared">Shared context<small>One memory every agent can draw on, so you never repeat yourself.</small></div>
+<p class="ctx-note">Reads and writes are permissioned. Recordings flow Plaud → Whisper → Vault → GBrain.</p>
+</div></section>
+
+<div class="link" aria-hidden="true"><i></i><span>↓ Any outbound action stops here first</span></div>
+
+<section class="layer" aria-label="Approval gate">
+<div class="layer-label"><span class="layer-num">4</span><h2>Approval gate</h2><span class="sub">You stay in control</span></div>
+<div class="gate-box"><span class="approval-icon" aria-hidden="true">✓</span><div class="txt"><strong>Asks before acting</strong><span>Agents prepare drafts. Nothing leaves until you approve it.</span></div><div class="outs"><span>✉ Mail</span><span>☏ Phone</span><span>📣 Posts</span></div></div>
+<div class="gate-flow"><div class="flow-step">Agent drafts</div><span class="arrow">→</span><div class="flow-step yes">You approve</div><span class="arrow">→</span><div class="flow-step">Sent + receipt</div></div>
+</section>
+
+<p class="note">SAMPLE ARCHITECTURE / SAMPLE INTERFACE — no live status, private data, or external actions.</p>
+</main></div>
+<script>
+const s=[...document.querySelectorAll('.src')];let i=0;
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const t=()=>{if(document.querySelector('.src.pop.open,.src.pop:hover,.src.pop:focus')){s.forEach(x=>x.classList.remove('active'));return}s.forEach((x,j)=>x.classList.toggle('active',j===i));i=(i+1)%s.length};t();setInterval(t,1400)}
+
+document.querySelectorAll('.src.pop').forEach(t=>{const tog=o=>{document.querySelectorAll('.src.pop').forEach(x=>{const on=x===t&&o;x.classList.toggle('open',on);x.setAttribute('aria-expanded',String(on))})};
+t.addEventListener('click',e=>{if(e.target.closest('.popover'))return;tog(!t.classList.contains('open'))});
+t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tog(!t.classList.contains('open'))}if(e.key==='Escape'){tog(false);t.blur()}});
+t.addEventListener('focus',()=>t.setAttribute('aria-expanded','true'));t.addEventListener('blur',()=>{if(!t.classList.contains('open'))t.setAttribute('aria-expanded','false')})});
+document.addEventListener('click',e=>{if(!e.target.closest('.src.pop'))document.querySelectorAll('.src.pop.open').forEach(x=>{x.classList.remove('open');x.setAttribute('aria-expanded','false')})});
+</script>
+</body></html>
