@@ -156,6 +156,14 @@ html.lock,html.lock body{overflow:hidden}
 .cva-prompt{font-size:13px;font-weight:700;background:#edf3ff;border:1px solid #cdd9f2;color:#315bb0;border-radius:10px;padding:8px 11px}
 @media(max-width:780px){.cva{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.packet{display:none}.stg{opacity:1;transition:none}.cva-ctrl{display:none}}
+
+.sources.groups{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+.grp{border:1px dashed rgba(255,255,255,.22);border-radius:16px;padding:10px}
+.grp-cap{margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f4c95d}
+.grp-tiles{display:grid;gap:10px}.grp-tiles.t3{grid-template-columns:repeat(3,1fr)}.grp-tiles.t2{grid-template-columns:repeat(2,1fr)}
+.agentl .stg small.cva-prompt{color:#1f4690;font-weight:700}
+@media(max-width:900px){.sources.groups{grid-template-columns:1fr}}
+@media(max-width:560px){.grp-tiles.t3,.grp-tiles.t2{grid-template-columns:1fr 1fr}.grp{padding:8px}}
 </style></head>
 <body><div class="shell">
 <header class="top"><div class="brand"><span class="mark">MC</span><span>Mission Control</span><b class="demo">SAMPLE ARCHITECTURE</b></div></header>
@@ -186,7 +194,8 @@ html.lock,html.lock body{overflow:hidden}
 <div class="roots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="ctx foundation">
 <p class="found-cap">Your memory layer <span>· the foundation every agent stands on</span></p>
-<div class="sources">
+<div class="sources groups">
+<div class="grp"><p class="grp-cap">Memory layer</p><div class="grp-tiles t3">
 <div class="src pop" tabindex="0" role="button" aria-expanded="false" aria-label="Obsidian Vault: show how notes link"><span class="ico" aria-hidden="true">◈</span><b>Obsidian Vault</b><small>Notes, people, projects, day-packs. The source of truth.</small><span class="hint">Hover or tap to see inside</span>
 <span class="popover" role="note"><p class="pop-title">Linked notes</p>
 <svg class="vg" viewBox="0 0 270 150" aria-hidden="true"><line class="anim" x1="135" y1="75" x2="50" y2="30"/><line class="anim" x1="135" y1="75" x2="220" y2="30"/><line class="anim" x1="135" y1="75" x2="220" y2="122"/><line class="anim" x1="135" y1="75" x2="50" y2="122"/><line class="anim" x1="50" y1="30" x2="220" y2="30"/><line class="anim" x1="50" y1="122" x2="220" y2="122"/>
@@ -202,9 +211,12 @@ html.lock,html.lock body{overflow:hidden}
 <span class="gb-query anim" style="display:block"><b>Agent asks:</b> “What did Michelle decide about the launch?”</span>
 <span class="gb-hit anim" style="display:block"><strong>Match found:</strong> Decision note · Launch plan (sample memory chunk)</span>
 <span class="pop-line" style="display:block">Agents get the right memory back, not the whole archive.</span></span></div>
+<div class="src mem"><span class="ico" aria-hidden="true">≡</span><b>Memory layers</b><small>Short-term, per-agent, and shared memory.</small><span class="chips"><span>Conversation</span><span>Agent</span><span>Shared</span></span></div>
+</div></div>
+<div class="grp"><p class="grp-cap">Communication</p><div class="grp-tiles t2">
 <div class="src"><span class="ico" aria-hidden="true">✉</span><b>Agent Mail</b><small>Email threads and drafts. Agents draft, you approve sends.</small></div>
 <div class="src"><span class="ico" aria-hidden="true">☏</span><b>Agent Phone</b><small>Calls, texts, and voice. Agents draft, you approve outbound.</small></div>
-<div class="src mem"><span class="ico" aria-hidden="true">≡</span><b>Memory layers</b><small>Short-term, per-agent, and shared memory.</small><span class="chips"><span>Conversation</span><span>Agent</span><span>Shared</span></span></div>
+</div></div>
 </div>
 <div class="merge" aria-hidden="true">↓</div>
 <div class="shared">Shared context<small>Every agent reads from it, so you never repeat yourself.</small></div>
