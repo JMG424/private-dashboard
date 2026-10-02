@@ -58,13 +58,14 @@
 @media(max-width:560px){.fronts{grid-template-columns:1fr;gap:12px}.specs{grid-template-columns:1fr 1fr;gap:10px}.specs .box:last-child{grid-column:1/-1}.sources{grid-template-columns:1fr 1fr}.src.mem{grid-column:1/-1}.chips{flex-direction:row;flex-wrap:wrap}.ctx{padding:14px}.gate-box{flex-direction:column;align-items:flex-start}.outs{margin-left:0}.gate-flow{grid-template-columns:1fr 14px 1fr 14px 1fr;gap:4px}.gate-flow .flow-step{font-size:12px;padding:10px 4px}.link span{white-space:normal;text-align:center;max-width:86%}.hero h1{font-size:34px}}
 @media(prefers-reduced-motion:reduce){.link i{animation:none;display:none}.src{transition:none}}
 
-.src.pop{position:relative;cursor:pointer;outline:none}.src.pop:hover,.src.pop:focus,.src.pop.open{z-index:50}.ctx,.sources{position:relative}.ctx{z-index:5}
+.src.pop{position:relative;cursor:pointer;outline:none}.src.pop:focus,.src.pop.is-open{z-index:50}.ctx,.sources{position:relative}.ctx{z-index:5}
 .src.pop:focus-visible{box-shadow:0 0 0 3px #82a9ef}
 .src .hint{display:block;margin-top:8px;font-size:11px;font-weight:800;color:#82a9ef;letter-spacing:.04em}
 .src.active .hint{color:#315bb0}
 .popover{position:absolute;top:calc(100% + 10px);left:0;z-index:30;width:300px;max-width:calc(100vw - 32px);background:#fff;color:var(--ink);border-radius:16px;padding:14px;box-shadow:0 24px 60px rgba(8,15,30,.45);border:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(6px);transition:.2s opacity,.2s transform,.2s visibility;pointer-events:none;text-align:left}
 .popover:before{content:"";position:absolute;top:-7px;left:26px;width:12px;height:12px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
-.src.pop:hover .popover,.src.pop:focus .popover,.src.pop.open .popover{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+@media(hover:hover){.src.pop:hover .popover{opacity:1;visibility:visible;transform:none;pointer-events:auto}.src.pop:hover .anim{animation-play-state:running}.src.pop:hover{z-index:50}}
+.src.pop:focus .popover,.src.pop.is-open .popover{opacity:1;visibility:visible;transform:none;pointer-events:auto}
 .pop-title{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#49658e;margin:0 0 8px}
 .pop-line{font-size:13px;color:var(--muted);margin:8px 0 0}
 .gb-in{display:flex;gap:6px;justify-content:center}
@@ -82,7 +83,7 @@
 .vg circle.hub{fill:#172a4d;stroke:#172a4d}
 .vg text{font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#182238;text-anchor:middle}
 .vg text.hubt{fill:#fff}
-.src.pop:hover .anim,.src.pop:focus .anim,.src.pop.open .anim{animation-play-state:running}
+.src.pop:focus .anim,.src.pop.is-open .anim{animation-play-state:running}
 .anim{animation-play-state:paused;animation-duration:6s;animation-iteration-count:infinite;animation-timing-function:ease}
 .gb-in span.anim{animation-name:gbIn}.gb-in span.anim:nth-child(2){animation-delay:.3s}
 .gb-index i.anim{animation-name:gbDot}.gb-index i.anim:nth-child(3){animation-delay:.2s}.gb-index i.anim:nth-child(5){animation-delay:.4s}.gb-index i.anim:nth-child(7){animation-delay:.6s}
@@ -96,11 +97,39 @@
 @media(max-width:900px){.src.pop:nth-child(2) .popover{left:auto;right:0}.src.pop:nth-child(2) .popover:before{left:auto;right:26px}}
 @media(max-width:560px){.popover{width:min(300px,calc(100vw - 40px))}.src.pop:nth-child(2) .popover{left:auto;right:0}}
 @media(prefers-reduced-motion:reduce){.anim{animation:none!important}.gb-index i{background:#f4c95d}.popover{transition:none;transform:none}}
+
+.city{border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,#f3f7ff,#fff 60%);padding:18px 22px 0;box-shadow:0 8px 24px rgba(31,45,75,.06);position:relative}
+.city-cap,.found-cap{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#49658e;text-align:center}
+.found-cap{color:#f4c95d;text-align:left;margin-bottom:14px}.found-cap span{color:#bfcbe0;text-transform:none;letter-spacing:0;font-weight:600;font-size:13px}
+.roots{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;height:30px}
+.roots i{justify-self:center;width:2px;height:100%;background:linear-gradient(#cad3e1,#82a9ef)}
+.foundation{margin:0 -22px;border-radius:22px 22px 0 0;padding:20px 22px 22px}
+.plugs{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin:0 -22px;padding:14px 16px 16px;background:#101c34;border-radius:0 0 26px 26px;border-top:1px dashed rgba(255,255,255,.2)}
+.plug-label{color:#bfcbe0;font-size:12px;font-weight:700}
+.plug{position:relative;background:#fff;color:#172a4d;font-size:12px;font-weight:800;border-radius:8px;padding:6px 11px 6px 22px}
+.plug:before,.plug:after{content:"";position:absolute;left:7px;width:7px;height:2px;background:#f4c95d;border-radius:1px}.plug:before{top:10px}.plug:after{bottom:10px}
+.plug.future{background:transparent;color:#bfcbe0;border:1px dashed rgba(255,255,255,.4)}
+.asset{display:flex;align-items:center;gap:16px;margin-top:14px;padding:16px 18px;background:#fff8e7;border:1px solid #ecd28a;border-radius:18px}
+.asset .approval-icon{flex:0 0 36px}.specs .name{line-height:1.25;display:block}
+.asset strong{display:block;font-size:17px}.asset span:not(.approval-icon){color:#71684f;font-size:14px}
+.inside-files{padding:20px}
+.fgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.fbtn{position:relative;text-align:left;border:1px solid rgba(255,255,255,.24);background:#20375f;color:#fff;border-radius:12px;padding:16px 12px 12px;cursor:pointer;transition:.2s background,.2s color,.2s transform}
+.fbtn:before{content:"";position:absolute;top:-1px;right:10px;width:20px;height:7px;border:1px solid rgba(255,255,255,.3);border-bottom:0;border-radius:4px 4px 0 0;background:#2b4b80}
+.fbtn b{display:block;font-size:14px}.fbtn small{display:block;margin-top:5px;color:#bfcbe0;font-size:12px;line-height:1.35}
+.fbtn:hover,.fbtn:focus-visible{background:#f4c95d;color:#172a4d;transform:translateY(-2px)}.fbtn:hover small,.fbtn:focus-visible small{color:#4e4114}
+.fbtn:focus-visible{outline:3px solid #82a9ef;outline-offset:2px}
+.fval{margin:14px 0 0;text-align:center;color:#fff;font-size:15px}.fval strong{color:#f4c95d}
+.fmodal .panel{max-height:calc(100vh - 28px);overflow:auto}
+.fmodal .fact.gate{grid-column:1/-1}
+@media(max-width:900px){.fgrid{grid-template-columns:repeat(3,1fr)}.roots{grid-template-columns:repeat(3,1fr)}.roots i:nth-child(n+4){display:none}}
+@media(max-width:560px){.city{padding:14px 14px 0;border-radius:20px}.foundation{margin:0 -14px;padding:16px 14px}.plugs{margin:0 -14px;border-radius:0 0 20px 20px;gap:7px}.plug-label{width:100%;text-align:center}.roots{grid-template-columns:1fr 1fr}.roots i:nth-child(n+3){display:none}.fgrid{grid-template-columns:1fr 1fr}.asset{align-items:flex-start}.inside-files{padding:14px}}
+@media(prefers-reduced-motion:reduce){.fbtn{transition:none;transform:none!important}}
 </style></head>
 <body><div class="shell">
 <header class="top"><div class="brand"><span class="mark">MC</span><span>Mission Control</span><b class="demo">SAMPLE ARCHITECTURE</b></div></header>
 <main>
-<section class="hero"><p class="eyebrow">The whole system at a glance</p><h1>How your agent team fits together.</h1><p>You talk to one system. A coordinator brings in specialists, they all draw on shared context, and nothing goes out without your approval.</p></section>
+<section class="hero"><p class="eyebrow">The whole system at a glance</p><h1>How your agent team fits together.</h1><p>You talk to one system. Your agents live on a memory layer you own, and nothing goes out without your approval.</p></section>
 
 <section class="layer" aria-label="Front ends">
 <div class="layer-label"><span class="layer-num">1</span><h2>Front ends</h2><span class="sub">How you talk to the system</span></div>
@@ -109,10 +138,12 @@
 <div class="box" style="--tone:#2a7fb8;--soft:#eaf5fc"><span class="agent-top"><span class="avatar" aria-hidden="true">➤</span><span><span class="name">Telegram</span><strong class="role">Hermes chat</strong></span></span><span class="promise">Quick messages to Hermes, wherever you are.</span></div>
 </div></section>
 
-<div class="link" aria-hidden="true"><i></i><span>↓ Your request goes to the coordinator</span></div>
+<div class="link" aria-hidden="true"><i></i><span>↓ Your request goes to Chief WDAI</span></div>
 
-<section class="layer" aria-label="Coordinator and agents">
-<div class="layer-label"><span class="layer-num">2</span><h2>Coordinator + agents</h2><span class="sub">Who does the work</span></div>
+<section class="layer" aria-label="Agents built on your memory layer">
+<div class="layer-label"><span class="layer-num">2</span><h2>Agents + memory layer</h2><span class="sub">Agents live on your memory</span></div>
+<div class="city">
+<p class="city-cap">Your agents</p>
 <div class="box lead-box" style="--tone:#315bb0;--soft:#edf3ff"><span class="agent-top"><span class="avatar" aria-hidden="true">✦</span><span><span class="name">Chief</span><strong class="role">WDAI</strong></span></span><span class="promise">Understands the goal, routes it to the right specialist, returns one answer.</span></div>
 <div class="spec-wrap"><div class="specs">
 <div class="box" style="--tone:#a56a12;--soft:#fff6df"><span class="agent-top"><span class="avatar" aria-hidden="true">▤</span><span><span class="name">Ledger</span><strong class="role">Finance</strong></span></span><span class="promise">Clear, reviewable money choices.</span></div>
@@ -120,13 +151,10 @@
 <div class="box" style="--tone:#167b68;--soft:#eaf9f5"><span class="agent-top"><span class="avatar" aria-hidden="true">♻</span><span><span class="name">Mimi’s Market</span><strong class="role">Resale</strong></span></span><span class="promise">Repeatable resale operations.</span></div>
 <div class="box" style="--tone:#31718c;--soft:#eaf6fa"><span class="agent-top"><span class="avatar" aria-hidden="true">♥</span><span><span class="name">Health Coach</span><strong class="role">Wellness</strong></span></span><span class="promise">Healthier routines, not medical care.</span></div>
 <div class="box" style="--tone:#7252a6;--soft:#f4effc"><span class="agent-top"><span class="avatar" aria-hidden="true">↻</span><span><span class="name">Helper</span><strong class="role">Improvement</strong></span></span><span class="promise">Proposes safer, smarter workflows.</span></div>
-</div></div></section>
-
-<div class="link up" aria-hidden="true"><i></i><span>↑ Agents read shared context</span></div>
-
-<section class="layer" aria-label="Context layer">
-<div class="layer-label"><span class="layer-num">3</span><h2>Context layer</h2><span class="sub">Why agents remember</span></div>
-<div class="ctx">
+</div></div>
+<div class="roots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="ctx foundation">
+<p class="found-cap">Your memory layer <span>· the foundation every agent stands on</span></p>
 <div class="sources">
 <div class="src pop" tabindex="0" role="button" aria-expanded="false" aria-label="Obsidian Vault: show how notes link"><span class="ico" aria-hidden="true">◈</span><b>Obsidian Vault</b><small>Notes, people, projects, day-packs. The source of truth.</small><span class="hint">Hover or tap to see inside</span>
 <span class="popover" role="note"><p class="pop-title">Linked notes</p>
@@ -135,8 +163,8 @@
 <circle cx="50" cy="30" r="21"/><text x="50" y="34">People</text><circle cx="220" cy="30" r="21"/><text x="220" y="34">Projects</text>
 <circle cx="220" cy="122" r="21"/><text x="220" y="126">Decisions</text><circle cx="50" cy="122" r="21"/><text x="50" y="119">Daily</text><text x="50" y="130">notes</text></svg>
 <p class="pop-line"><strong>Source of truth agents read from.</strong> Sample labels only.</p></span></div>
-<div class="src pop" tabindex="0" role="button" aria-expanded="false" aria-label="GBrain: show how search works"><span class="ico" aria-hidden="true">⌕</span><b>GBrain</b><small>Searchable memory and archive built from the vault and recordings.</small><span class="hint">Hover or tap to see inside</span>
-<span class="popover" role="note"><p class="pop-title">How GBrain finds things</p>
+<div class="src pop" tabindex="0" role="button" aria-expanded="false" aria-label="GBrain: show how search works"><span class="ico" aria-hidden="true">⌕</span><b>GBrain</b><small>The searchable brain of your memory layer, built from the vault and recordings.</small><span class="hint">Hover or tap to see inside</span>
+<span class="popover" role="note"><p class="pop-title">The searchable brain of your memory layer</p>
 <span class="gb-in"><span class="anim">Transcripts</span><span class="anim">Notes</span></span>
 <span class="gb-arrow" style="display:block" aria-hidden="true">↓ indexed into connected memory</span>
 <span class="gb-index" aria-hidden="true"><i class="anim"></i><i></i><i class="anim"></i><i></i><i class="anim"></i><i></i><i class="anim"></i></span>
@@ -148,8 +176,29 @@
 <div class="src mem"><span class="ico" aria-hidden="true">≡</span><b>Memory layers</b><small>Short-term, per-agent, and shared memory.</small><span class="chips"><span>Conversation</span><span>Agent</span><span>Shared</span></span></div>
 </div>
 <div class="merge" aria-hidden="true">↓</div>
-<div class="shared">Shared context<small>One memory every agent can draw on, so you never repeat yourself.</small></div>
+<div class="shared">Shared context<small>Every agent reads from it, so you never repeat yourself.</small></div>
 <p class="ctx-note">Reads and writes are permissioned. Recordings flow Plaud → Whisper → Vault → GBrain.</p>
+</div>
+<div class="plugs" aria-label="Plugs into any harness"><span class="plug-label">Plugs into</span><span class="plug">Hermes</span><span class="plug">Grok Bot</span><span class="plug">Claude</span><span class="plug">ChatGPT</span><span class="plug future">Future tools</span></div>
+</div>
+<div class="asset"><span class="approval-icon" aria-hidden="true">★</span><div><strong>Your memory layer is the asset.</strong><span>It’s portable: plug and play into any harness, AI model, or agent tool as they evolve. That portability is where the leverage is today.</span></div></div>
+</section>
+
+<div class="link" aria-hidden="true"><i></i><span>↓ Every agent is shaped by a few files</span></div>
+
+<section class="layer" aria-label="Inside an agent">
+<div class="layer-label"><span class="layer-num">3</span><h2>Inside an agent</h2><span class="sub">Tap a file to see what it does</span></div>
+<div class="ctx inside-files">
+<div class="fgrid">
+<button class="fbtn" data-f="USER.md"><b>USER.md</b><small>Who you are and how you work</small></button>
+<button class="fbtn" data-f="SOUL.md"><b>SOUL.md</b><small>Personality, values, voice</small></button>
+<button class="fbtn" data-f="AGENTS.md"><b>AGENTS.md</b><small>The job, rules, workflows</small></button>
+<button class="fbtn" data-f="MEMORY.md"><b>MEMORY.md</b><small>Durable facts learned over time</small></button>
+<button class="fbtn" data-f="TOOLS.md"><b>TOOLS.md</b><small>Which tools it may use</small></button>
+<button class="fbtn" data-f="HEARTBEAT.md"><b>HEARTBEAT.md</b><small>Recurring check-ins</small></button>
+</div>
+<p class="fval"><strong>Why they matter:</strong> these files compound over time and move with you to any harness.</p>
+<p class="ctx-note">Illustrative only: generic examples, not real files, paths, or private data.</p>
 </div></section>
 
 <div class="link" aria-hidden="true"><i></i><span>↓ Any outbound action stops here first</span></div>
@@ -164,12 +213,24 @@
 </main></div>
 <script>
 const s=[...document.querySelectorAll('.src')];let i=0;
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const t=()=>{if(document.querySelector('.src.pop.open,.src.pop:hover,.src.pop:focus')){s.forEach(x=>x.classList.remove('active'));return}s.forEach((x,j)=>x.classList.toggle('active',j===i));i=(i+1)%s.length};t();setInterval(t,1400)}
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const t=()=>{if(document.querySelector('.src.pop.is-open,.src.pop:hover,.src.pop:focus')){s.forEach(x=>x.classList.remove('active'));return}s.forEach((x,j)=>x.classList.toggle('active',j===i));i=(i+1)%s.length};t();setInterval(t,1400)}
 
-document.querySelectorAll('.src.pop').forEach(t=>{const tog=o=>{document.querySelectorAll('.src.pop').forEach(x=>{const on=x===t&&o;x.classList.toggle('open',on);x.setAttribute('aria-expanded',String(on))})};
-t.addEventListener('click',e=>{if(e.target.closest('.popover'))return;tog(!t.classList.contains('open'))});
-t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tog(!t.classList.contains('open'))}if(e.key==='Escape'){tog(false);t.blur()}});
-t.addEventListener('focus',()=>t.setAttribute('aria-expanded','true'));t.addEventListener('blur',()=>{if(!t.classList.contains('open'))t.setAttribute('aria-expanded','false')})});
-document.addEventListener('click',e=>{if(!e.target.closest('.src.pop'))document.querySelectorAll('.src.pop.open').forEach(x=>{x.classList.remove('open');x.setAttribute('aria-expanded','false')})});
+document.querySelectorAll('.src.pop').forEach(t=>{const tog=o=>{document.querySelectorAll('.src.pop').forEach(x=>{const on=x===t&&o;x.classList.toggle('is-open',on);x.setAttribute('aria-expanded',String(on))})};
+t.addEventListener('click',e=>{if(e.target.closest('.popover'))return;tog(!t.classList.contains('is-open'))});
+t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tog(!t.classList.contains('is-open'))}if(e.key==='Escape'){tog(false);t.blur()}});
+t.addEventListener('focus',()=>t.setAttribute('aria-expanded','true'));t.addEventListener('blur',()=>{if(!t.classList.contains('is-open'))t.setAttribute('aria-expanded','false')})});
+document.addEventListener('click',e=>{if(!e.target.closest('.src.pop'))document.querySelectorAll('.src.pop.is-open').forEach(x=>{x.classList.remove('is-open');x.setAttribute('aria-expanded','false')})});
+</script>
+<dialog class="modal fmodal" id="fileModal" aria-labelledby="fmTitle"><div class="panel"><button class="close" aria-label="Close">×</button><p class="eyebrow">Inside an agent</p><h2 id="fmTitle"></h2><p class="panel-sub" id="fmSub"></p><div class="facts"><section class="fact"><h3>What it’s used for</h3><p id="fmUse"></p></section><section class="fact"><h3>Generic example</h3><ul id="fmEx"></ul></section><section class="fact gate"><h3>Why it’s valuable</h3><p id="fmWhy"></p></section></div></div></dialog>
+<script>
+const F={'USER.md':['About you','Tells every agent who you are: your role, your goals, your preferences, and how you like to work, so you never have to explain yourself twice.',['Prefers short, decision-ready summaries','Top goal this quarter: grow the business','Best time for check-ins: mornings'],'The better it knows you, the less you repeat yourself. It gets sharper every week.'],
+'SOUL.md':['The agent’s character','Sets the agent’s personality, values, voice, and boundaries: how it sounds, what it cares about, and what it will never do.',['Calm, direct, and plain-spoken','Honest about uncertainty','Never pretends to be a professional advisor'],'A consistent character means trustworthy, predictable work every time.'],
+'AGENTS.md':['The job description','Defines the agent’s job, rules, and workflows: which specialists it calls, in what order it works, and exactly when it must stop and ask you for approval.',['Route money questions to the finance agent','Plan first, then act','Ask before sending anything outside'],'Good rules turn one-off help into a repeatable operating system.'],
+'MEMORY.md':['What it has learned','Keeps durable facts learned over time: decisions made, lessons learned, and context worth remembering, without replaying every past conversation.',['A sample decision and its date','A lesson learned from a past project','A recurring deadline'],'Memory compounds. Each week the agent starts smarter than the last.'],
+'TOOLS.md':['What it may use','Lists which tools and accounts the agent may use, and how: what it can read, what it can draft, and what always needs your permission.',['Can read the calendar','Can draft emails, not send them','Never moves money'],'Clear tool rules keep agents useful and safe at the same time.'],
+'HEARTBEAT.md':['Its routines','Sets the agent’s recurring check-ins and routines: what it reviews, how often, and when it should stay quiet.',['Morning briefing on weekdays','Weekly review of open tasks','Stay quiet unless something needs you'],'Routines mean work moves forward even when you are not asking.']};
+const fm=document.querySelector('#fileModal');let fmTrig=null;
+document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',()=>{const d=F[b.dataset.f];fmTrig=b;document.querySelector('#fmTitle').textContent=b.dataset.f;document.querySelector('#fmSub').textContent=d[0];document.querySelector('#fmUse').textContent=d[1];document.querySelector('#fmEx').innerHTML=d[2].map(x=>'<li>'+x+'</li>').join('');document.querySelector('#fmWhy').textContent=d[3]+' These files compound over time and move with you to any harness.';fm.showModal();fm.querySelector('.close').focus()}));
+fm.querySelector('.close').addEventListener('click',()=>fm.close());fm.addEventListener('click',e=>{if(e.target===fm)fm.close()});fm.addEventListener('close',()=>{fmTrig&&fmTrig.focus();fmTrig=null});
 </script>
 </body></html>
